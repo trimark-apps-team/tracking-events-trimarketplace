@@ -2,15 +2,10 @@ window.addEventListener("load", (event) => {
     const dataLayer = window.dataLayer || [];
     console.log(dataLayer)
     dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
-});
 
 // session start event
-$(function () {
     var sessionStarted = getCookie("session_started");
-    if(sessionStarted) {
-        return
-    }
-    else {
+    if(!sessionStarted) {
         dataLayer.push({
             event: 'session_start'
         });
@@ -19,7 +14,7 @@ $(function () {
         })
         setCookie('session_started', true);
     }
-  });
+});
 
 
 
