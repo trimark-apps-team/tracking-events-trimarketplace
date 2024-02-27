@@ -2,15 +2,24 @@ window.addEventListener("load", (event) => {
     const dataLayer = window.dataLayer || [];
     console.log(dataLayer)
     dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
-
-    dataLayer.push({
-        event: 'site_event',
-        event_category: 'test',
-        event_action: 'visit page'
-    });
 });
 
-
+// session start event
+$(function () {
+    var sessionStarted = $.cookie("session_started");
+    if(sessionStarted) {
+        return
+    }
+    else {
+        dataLayer.push({
+            event: 'session_start'
+        });
+        dataLayer.push({
+            event: 'first_visit'
+        })
+        $.cookie('session_started', true);
+    }
+  });
 
 
 // 
