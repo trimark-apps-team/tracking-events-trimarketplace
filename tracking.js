@@ -14,6 +14,18 @@ window.addEventListener("load", (event) => {
         })
         setCookie('session_started', true);
     }
+
+// successful login check for .user-info-logged-in class and set cookie to only fire once per session
+    var loggedInCookie = getCookie("logged_in");
+    var loggedInClass = document.querySelector('.user-info-logged-in')
+    if(loggedInClass && !loggedInCookie) {
+        dataLayer.push({
+            event: 'login'
+        });
+        setCookie('logged_in', true)
+
+    }
+
 });
 
 
