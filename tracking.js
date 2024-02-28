@@ -1,10 +1,10 @@
 window.addEventListener("load", (event) => {
     const dataLayer = window.dataLayer || [];
-    console.log(dataLayer)
     dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
     const btn = document.querySelector("button");
     const productDetail = document.querySelector(".product-detail")
     const downLoadDocument = document.querySelector(".download-document")
+    const productTitle = document.querySelector(".product-title h1").textContent;
 
 // session start event
     var sessionStarted = getCookie("session_started");
@@ -28,20 +28,21 @@ window.addEventListener("load", (event) => {
     if(loggedInClass && !loggedInCookie) {
         dataLayer.push({
             event: 'login',
-            eventCategory: 'form',
-            eventLabel: ''
+            eventCategory: 'form submission',
+            eventLabel: 'login form submit'
         });
         setCookie('logged_in', true)
     }
 
 // add to cart click event
     $("button").click(function() {
-        console.log(this.innerHTML)
+
         if(this.innerHTML === 'ADD TO CART') {
             console.log('add to cart button clicked')
             dataLayer.push({
                 event: 'add_to_cart',
-                eventCategory: 'click'
+                eventCategory: 'click',
+                eventLabel: productTitle
             });
         }
     })
@@ -59,7 +60,6 @@ window.addEventListener("load", (event) => {
     // view item
     if(productDetail && window.location.href.indexOf("product-details") > -1) {
         const itemNumber = document.querySelector(".item-number-top span").textContent;
-        const productTitle = document.querySelector(".product-title h1");
         dataLayer.push({
             event: 'view_item',
             eventCategory: 'page view',
@@ -101,6 +101,39 @@ window.addEventListener("load", (event) => {
 
       $(".delete-orderline").click(function() {
         console.log('remove item clicked')
+      })
+
+      // my catalog select item event
+      $(".product-card a").click(function() {
+        let productName = $(this).closest('.product-name').textContent;
+        dataLayer.push({
+            event: 'select_item',
+            eventCategory: 'click',
+            eventLabel: productName
+
+        })
+      })
+
+      // mini cart select item event
+      $(".group-style-sku-parent a").click(function() {
+        let productName = $(this).closest('.product-name').textContent;
+        dataLayer.push({
+            event: 'select_item',
+            eventCategory: 'click',
+            eventLabel: productName
+
+        })
+      })
+
+      // full cart view select item event
+      $(".orderline a").click(function() {
+        let productName = $(this).closest('.product-name').textContent;
+        dataLayer.push({
+            event: 'select_item',
+            eventCategory: 'click',
+            eventLabel: productName
+
+        })
       })
 
 
