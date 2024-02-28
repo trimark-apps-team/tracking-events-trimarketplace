@@ -2,6 +2,7 @@ window.addEventListener("load", (event) => {
     const dataLayer = window.dataLayer || [];
     console.log(dataLayer)
     dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
+    const btn = document.querySelector("button");
 
 // session start event
     var sessionStarted = getCookie("session_started");
@@ -15,7 +16,7 @@ window.addEventListener("load", (event) => {
         setCookie('session_started', true);
     }
 
-// successful login check for .user-info-logged-in class and set cookie to only fire once per session
+// successful login check for .user-info-logged-in class on the my account page and set cookie to only fire once per session
     var loggedInCookie = getCookie("logged_in");
     var loggedInClass = document.querySelector('.user-info-logged-in')
     if(loggedInClass && !loggedInCookie) {
@@ -25,6 +26,17 @@ window.addEventListener("load", (event) => {
         setCookie('logged_in', true)
 
     }
+
+// add to cart click event
+    btn.addEventListener("click", function () {
+        console.log(this.innerHTML)
+        if(this.innerHTML === 'ADD TO CART') {
+            console.log('add to cart button clicked')
+            dataLayer.push({
+                event: 'add_to_cart'
+            });
+        }
+    });
 
 });
 
