@@ -36,14 +36,14 @@ window.addEventListener("load", (event) => {
     }
 
 // add to cart click event
-    $("button").click(function() {
-        if(this.innerHTML === 'ADD TO CART') {
+    $(".add-to-cart button").click(function() {
+        
             console.log('add to cart button clicked')
             gtag('event', 'add_to_cart', {
                 'event_category': 'click',
                 'event_label': productTitle.textContent
             });
-        }
+        
     })
 
 
@@ -57,7 +57,6 @@ window.addEventListener("load", (event) => {
 
     // view item
     if(productDetail && window.location.href.indexOf("product-details") > -1) {
-        const itemNumber = document.querySelector(".item-number-top span").textContent;
         gtag('event', 'view_item', {
             'event_category': 'page view',
             'event_label': productTitle.textContent
