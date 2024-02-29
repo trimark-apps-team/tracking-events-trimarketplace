@@ -36,7 +36,7 @@ window.addEventListener("load", (event) => {
     }
 
     // add to cart click event on my catalog
-    $(".product-card .add-to-cart").click(function() {
+    $(".add-to-cart button.buy").click(function() {
             const currentProductCard = $(this).parents('.product-card')
             console.log('add to cart button clicked on my catalog')
             console.log(currentProductCard)
