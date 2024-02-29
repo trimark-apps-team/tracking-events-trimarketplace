@@ -36,7 +36,7 @@ window.addEventListener("load", (event) => {
     }
 
     // add to cart click event on my catalog
-    $(".product-card .add-to-cart button").click(function() {
+    $(".product-card .add-to-cart").click(function() {
             const currentProductCard = $(this).parents('.product-card')
             console.log('add to cart button clicked on my catalog')
             console.log(currentProductCard)
@@ -57,7 +57,6 @@ window.addEventListener("load", (event) => {
 
     // add-to-cart pdp page
     $(".product-detail button.add-to-cart").click(function() {
-        const productDetail = $(this).parents('.product-detail')
         console.log('add to cart button clicked on PDP page')
         console.log(productDetail)
         gtag('event', 'add_to_cart', {
@@ -85,7 +84,6 @@ window.addEventListener("load", (event) => {
 
     // view item on pdp page
     if(productDetail && window.location.href.indexOf("product-details") > -1) {
-        const productDetail = $(this).parents('.product-detail')
         console.log('view item PDP page')
         console.log(productDetail)
         gtag('event', 'view_item', {
@@ -96,7 +94,7 @@ window.addEventListener("load", (event) => {
                 item_id: $(productDetail).find('.item-number-top span').text() || '',
                 item_name: $(productDetail).find(".product-description").text() || '',
                 price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text()) || 0.00,
-                quantity: parseFloat($(productDetail).find(".order-actions .input-text").val()) || 1
+                quantity: 1
               },
             ]
         });
@@ -119,10 +117,20 @@ window.addEventListener("load", (event) => {
 
       // my catalog select item event
       $(".product-card a").click(function() {
-        let productName = $(this).closest('.product-name').textContent;
+        const currentProductCard = $(this).parents('.product-card')
+        console.log('select item fired on my catalog')
+        console.log(currentProductCard)
         gtag('event', 'select_item', {
-            'event_category': 'click',
-            'event_label': productName
+            currency: "USD",
+            value: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text()) || 0.00,
+            items: [
+              {
+                item_id: $(currentProductCard).attr('id') || '',
+                item_name: $(currentProductCard).find(".product-description").text() || '',
+                price: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text()) || 0.00,
+                quantity: 1
+              },
+            ]
         });
       })
 
