@@ -1,48 +1,47 @@
 window.addEventListener("load", (event) => {
-    const dataLayer = window.dataLayer || [];
-    dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
-    const btn = document.querySelector("button");
     const productDetail = document.querySelector(".product-detail")
-    const downLoadDocument = document.querySelector(".download-document")
-    const productTitle = document.querySelector(".product-title h1").textContent;
+    const productTitle = document.querySelector(".product-title h1");
 
 // session start event
     var sessionStarted = getCookie("session_started");
     if(!sessionStarted) {
-        dataLayer.push({
-            event: 'session_start',
-            eventCategory: 'user',
-            eventLabel: ''
-        });
-        dataLayer.push({
-            event: 'first_visit',
-            eventCategory: 'user',
-            eventLabel: ''
-        })
+        gtag('event', 'session_start', {
+            'event_category': 'user session',
+            
+          });
+      
         setCookie('session_started', true);
+    }
+
+
+// first visit event. Fires only if user does not have site_visitor in localstorage
+    var siteVisitor = localStorage.getItem('site_visitor')
+    if(!siteVisitor) {
+        gtag('event', 'first_visit', {
+            'event_category': 'new user',
+        });
+
+        localStorage.setItem("site_visitor", true);
     }
 
 // successful login check for .user-info-logged-in class on the my account page and set cookie to only fire once per session
     var loggedInCookie = getCookie("logged_in");
     var loggedInClass = document.querySelector('.user-info-logged-in')
     if(loggedInClass && !loggedInCookie) {
-        dataLayer.push({
-            event: 'login',
-            eventCategory: 'form submission',
-            eventLabel: 'login form submit'
+        gtag('event', 'login', {
+            'event_category': 'form submission',
+            'event_label': 'login form submit'
         });
         setCookie('logged_in', true)
     }
 
 // add to cart click event
     $("button").click(function() {
-
         if(this.innerHTML === 'ADD TO CART') {
             console.log('add to cart button clicked')
-            dataLayer.push({
-                event: 'add_to_cart',
-                eventCategory: 'click',
-                eventLabel: productTitle
+            gtag('event', 'add_to_cart', {
+                'event_category': 'click',
+                'event_label': productTitle.textContent
             });
         }
     })
@@ -50,54 +49,31 @@ window.addEventListener("load", (event) => {
 
 // view cart
     if (window.location.href.indexOf("shopping-cart") > -1) {
-        dataLayer.push({
-            event: 'view_cart',
-            eventCategory: 'page view',
-            eventLabel: ''
+        gtag('event', 'view_cart', {
+            'event_category': 'page view',
         });
+ 
     }
 
     // view item
     if(productDetail && window.location.href.indexOf("product-details") > -1) {
         const itemNumber = document.querySelector(".item-number-top span").textContent;
-        dataLayer.push({
-            event: 'view_item',
-            eventCategory: 'page view',
-            eventLabel: productTitle
-            
+        gtag('event', 'view_item', {
+            'event_category': 'page view',
+            'event_label': productTitle.textContent
         });
     }
 
     // begin checkout event
     const shippingStepLink = document.querySelector(".shipping-step a")
-    if(shippingStepLink.classList.contains('active')) {
-        dataLayer.push({
-            event: 'begin_checkout',
-            eventCategory: 'page view',
-            eventLabel: ''
+    if(shippingStepLink && shippingStepLink.classList.contains('active')) {
+        gtag('event', 'begin_checkout', {
+            'event_category': 'page view'
         });
     }
 
 
-    // leaves website
-    window.addEventListener('beforeunload', function(e) {
-        const lastPageVisited = window.location.href
-        dataLayer.push({
-            event: 'outbound_click',
-            eventCategory: 'click',
-            eventLabel: lastPageVisited
-        })
-      });
 
-      $(".download-document").click(function() {
-        console.log('download button clicked')
-        const pageTitle = document.querySelector(".page-title")
-        dataLayer.push({
-            event: 'file_download',
-            eventCategory: 'click',
-            eventLabel: pageTitle
-        })
-      })
 
       $(".delete-orderline").click(function() {
         console.log('remove item clicked')
@@ -106,34 +82,28 @@ window.addEventListener("load", (event) => {
       // my catalog select item event
       $(".product-card a").click(function() {
         let productName = $(this).closest('.product-name').textContent;
-        dataLayer.push({
-            event: 'select_item',
-            eventCategory: 'click',
-            eventLabel: productName
-
-        })
+        gtag('event', 'select_item', {
+            'event_category': 'click',
+            'event_label': productName
+        });
       })
 
       // mini cart select item event
       $(".group-style-sku-parent a").click(function() {
         let productName = $(this).closest('.product-name').textContent;
-        dataLayer.push({
-            event: 'select_item',
-            eventCategory: 'click',
-            eventLabel: productName
-
-        })
+        gtag('event', 'select_item', {
+            'event_category': 'click',
+            'event_label': productName
+        });
       })
 
       // full cart view select item event
       $(".orderline a").click(function() {
         let productName = $(this).closest('.product-name').textContent;
-        dataLayer.push({
-            event: 'select_item',
-            eventCategory: 'click',
-            eventLabel: productName
-
-        })
+        gtag('event', 'select_item', {
+            'event_category': 'click',
+            'event_label': productName
+        });
       })
 
 
