@@ -35,15 +35,43 @@ window.addEventListener("load", (event) => {
         setCookie('logged_in', true)
     }
 
-// add to cart click event
-    $(".add-to-cart button").click(function() {
-        
-            console.log('add to cart button clicked')
+    // add to cart click event on my catalog
+    $(".product-card .add-to-cart button").click(function() {
+            const currentProductCard = $(this).parents('.product-card')
+            console.log('add to cart button clicked on my catalog')
+            console.log(currentProductCard)
             gtag('event', 'add_to_cart', {
-                'event_category': 'click',
-                'event_label': productTitle.textContent
+                currency: "USD",
+                value: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text()) || 0.00,
+                items: [
+                  {
+                    item_id: $(currentProductCard).attr('id') || '',
+                    item_name: $(currentProductCard).find(".product-description").text() || '',
+                    price: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text()) || 0.00,
+                    quantity: parseFloat($(currentProductCard).find(".controls .quantity .input-text").attr('data-decimalquantity')) || 1
+                  },
+                ]
             });
         
+    })
+
+    // add-to-cart pdp page
+    $(".product-detail button.add-to-cart").click(function() {
+        const productDetail = $(this).parents('.product-detail')
+        console.log('add to cart button clicked on PDP page')
+        console.log(productDetail)
+        gtag('event', 'add_to_cart', {
+            currency: "USD",
+            value: parseFloat($(productDetail).find(".display-price h2").text()) || 0.00,
+            items: [
+              {
+                item_id: $(productDetail).find('.item-number-top span').text() || '',
+                item_name: $(productDetail).find(".product-description").text() || '',
+                price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text()) || 0.00,
+                quantity: parseFloat($(productDetail).find(".order-actions .input-text").val()) || 1
+              },
+            ]
+        });
     })
 
 
@@ -55,11 +83,22 @@ window.addEventListener("load", (event) => {
  
     }
 
-    // view item
+    // view item on pdp page
     if(productDetail && window.location.href.indexOf("product-details") > -1) {
+        const productDetail = $(this).parents('.product-detail')
+        console.log('view item PDP page')
+        console.log(productDetail)
         gtag('event', 'view_item', {
-            'event_category': 'page view',
-            'event_label': productTitle.textContent
+            currency: "USD",
+            value: parseFloat($(productDetail).find(".display-price h2").text()) || 0.00,
+            items: [
+              {
+                item_id: $(productDetail).find('.item-number-top span').text() || '',
+                item_name: $(productDetail).find(".product-description").text() || '',
+                price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text()) || 0.00,
+                quantity: parseFloat($(productDetail).find(".order-actions .input-text").val()) || 1
+              },
+            ]
         });
     }
 
