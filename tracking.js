@@ -1,4 +1,6 @@
-window.onload = () => {
+$(document).ready(function () {
+
+
     const productDetail = document.querySelector(".product-detail")
     const productTitle = document.querySelector(".product-title h1");
 
@@ -36,7 +38,10 @@ window.onload = () => {
     }
 
     // add to cart click event on my catalog
-    $(".product-card .add-to-cart").click(function () {
+    $(".product-card").click(function () {
+        console.log('clicked inside product card')
+    })
+    $(".product-card .add-to-cart .ecom-button button").click(function () {
         const currentProductCard = $(this).parents('.product-card')
         console.log('add to cart button clicked on my catalog')
         console.log(currentProductCard)
@@ -56,7 +61,7 @@ window.onload = () => {
     })
 
     // add-to-cart pdp page
-    $(".product-detail .inner-container .add-to-cart").click(function () {
+    $(".product-detail button").click(function () {
         console.log('add to cart button clicked on PDP page')
         console.log(productDetail)
         gtag('event', 'add_to_cart', {
@@ -162,7 +167,7 @@ window.onload = () => {
         })
 
     })
-}
+})
 
 
 
