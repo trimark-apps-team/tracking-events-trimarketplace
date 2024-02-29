@@ -1,8 +1,9 @@
 $(window).load(function () {
 
+    console.log(gtag)
 
-    const productDetail = document.querySelector(".product-detail")
-    const productTitle = document.querySelector(".product-title h1");
+    const productDetail = $(".product-detail")
+    const productTitle = $(".product-title h1");
 
     // session start event
     var sessionStarted = getCookie("session_started");
@@ -38,9 +39,6 @@ $(window).load(function () {
     }
 
     // add to cart click event on my catalog
-    $(".buy").click(function () {
-        console.log('clicked inside product card')
-    })
     $(".buy").click(function () {
         const currentProductCard = $(this).parents('.product-card')
         console.log('add to cart button clicked on my catalog')
