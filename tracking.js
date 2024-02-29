@@ -1,5 +1,4 @@
-$(document).ready(function () {
-
+window.onload = () => {
     const productDetail = document.querySelector(".product-detail")
     const productTitle = document.querySelector(".product-title h1");
 
@@ -38,11 +37,10 @@ $(document).ready(function () {
 
 
     $("button").click(function () {
-
         console.log($(this))
     })
     // add to cart click event on my catalog
-    $("button.buy").click(function () {
+    $(".buy").click(function () {
         const currentProductCard = $(this).parents('.product-card')
         console.log('add to cart button clicked on my catalog')
         console.log(currentProductCard)
@@ -62,7 +60,7 @@ $(document).ready(function () {
     })
 
     // add-to-cart pdp page
-    $("button.add-to-cart").click(function () {
+    $(".add-to-cart").click(function () {
         console.log('add to cart button clicked on PDP page')
         console.log(productDetail)
         gtag('event', 'add_to_cart', {
@@ -168,7 +166,7 @@ $(document).ready(function () {
         })
 
     })
-})
+}
 
 
 
