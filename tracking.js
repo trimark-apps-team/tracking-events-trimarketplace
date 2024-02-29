@@ -38,15 +38,15 @@ window.addEventListener("load", (event) => {
         setCookie('logged_in', true)
     }
 
-    $(".add-to-cart button").click(function () {
+    // $(".add-to-cart button").click(function () {
 
-        console.log('add to cart button clicked')
-        gtag('event', 'add_to_cart', {
-            'event_category': 'click',
-            'event_label': productTitle.textContent
-        });
+    //     console.log('add to cart button clicked')
+    //     gtag('event', 'add_to_cart', {
+    //         'event_category': 'click',
+    //         'event_label': productTitle.textContent
+    //     });
 
-    })
+    // })
     // add to cart click event on my catalog
     $(".buy").click(function () {
         const currentProductCard = $(this).parents('.product-card')
