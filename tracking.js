@@ -38,6 +38,7 @@ $(document).ready(function () {
 
 
     $("button").click(function () {
+
         console.log($(this))
     })
     // add to cart click event on my catalog
