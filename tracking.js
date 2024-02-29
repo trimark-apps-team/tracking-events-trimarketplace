@@ -1,4 +1,6 @@
-window.addEventListener("load", (event) => {
+$(document).ready(function () {
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-ETJTNZLM20');
     const productDetail = document.querySelector(".product-detail")
     const productTitle = document.querySelector(".product-title h1");
 
@@ -162,11 +164,7 @@ window.addEventListener("load", (event) => {
         })
 
     })
-
-
-
-
-});
+})
 
 
 
