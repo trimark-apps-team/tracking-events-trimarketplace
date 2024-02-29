@@ -1,6 +1,5 @@
 $(document).ready(function () {
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-ETJTNZLM20');
+
     const productDetail = document.querySelector(".product-detail")
     const productTitle = document.querySelector(".product-title h1");
 
@@ -37,6 +36,10 @@ $(document).ready(function () {
         setCookie('logged_in', true)
     }
 
+
+    $("button").click(function () {
+        console.log($(this))
+    })
     // add to cart click event on my catalog
     $("button.buy").click(function () {
         const currentProductCard = $(this).parents('.product-card')
