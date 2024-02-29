@@ -35,12 +35,8 @@ window.onload = () => {
         setCookie('logged_in', true)
     }
 
-
-    $("button").click(function () {
-        console.log($(this))
-    })
     // add to cart click event on my catalog
-    $(".buy").click(function () {
+    $(".product-card .add-to-cart").click(function () {
         const currentProductCard = $(this).parents('.product-card')
         console.log('add to cart button clicked on my catalog')
         console.log(currentProductCard)
@@ -60,7 +56,7 @@ window.onload = () => {
     })
 
     // add-to-cart pdp page
-    $(".add-to-cart").click(function () {
+    $(".product-detail .inner-container .add-to-cart").click(function () {
         console.log('add to cart button clicked on PDP page')
         console.log(productDetail)
         gtag('event', 'add_to_cart', {
