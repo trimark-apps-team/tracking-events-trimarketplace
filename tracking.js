@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(window).load(function () {
 
 
     const productDetail = document.querySelector(".product-detail")
@@ -38,10 +38,10 @@ $(document).ready(function () {
     }
 
     // add to cart click event on my catalog
-    $(".product-card").click(function () {
+    $(".buy").click(function () {
         console.log('clicked inside product card')
     })
-    $(".product-card .add-to-cart .ecom-button button").click(function () {
+    $(".buy").click(function () {
         const currentProductCard = $(this).parents('.product-card')
         console.log('add to cart button clicked on my catalog')
         console.log(currentProductCard)
@@ -61,22 +61,24 @@ $(document).ready(function () {
     })
 
     // add-to-cart pdp page
-    $(".product-detail button").click(function () {
-        console.log('add to cart button clicked on PDP page')
-        console.log(productDetail)
-        gtag('event', 'add_to_cart', {
-            currency: "USD",
-            value: parseFloat($(productDetail).find(".display-price h2").text()) || 0.00,
-            items: [
-                {
-                    item_id: $(productDetail).find('.item-number-top span').text() || '',
-                    item_name: $(productDetail).find(".product-description").text() || '',
-                    price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text()) || 0.00,
-                    quantity: parseFloat($(productDetail).find(".order-actions .input-text").val()) || 1
-                },
-            ]
-        });
-    })
+    if (productDetail && window.location.href.indexOf("product-details") > -1) {
+        $(".product-detail button").click(function () {
+            console.log('add to cart button clicked on PDP page')
+            console.log(productDetail)
+            gtag('event', 'add_to_cart', {
+                currency: "USD",
+                value: parseFloat($(productDetail).find(".display-price h2").text()) || 0.00,
+                items: [
+                    {
+                        item_id: $(productDetail).find('.item-number-top span').text() || '',
+                        item_name: $(productDetail).find(".product-description").text() || '',
+                        price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text()) || 0.00,
+                        quantity: parseFloat($(productDetail).find(".order-actions .input-text").val()) || 1
+                    },
+                ]
+            });
+        })
+    }
 
     // view item on pdp page
     if (productDetail && window.location.href.indexOf("product-details") > -1) {
