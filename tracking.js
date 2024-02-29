@@ -154,12 +154,11 @@ window.addEventListener("load", (event) => {
     $(".delete-orderline").click(function () {
         console.log('remove item clicked')
         const miniCartItem = $(this).parents('.mini-cart-contents .item')
-        let miniCartItemQuantity = parseFloat($(miniCartItem).find('.input-text').val()) || 1
-        let miniCartItemPrice =
+        let miniCartItemQuantity = parseFloat($(miniCartItem).find('.input-text').val()) || 1;
 
-            gtag('event', 'remove_from_cart', {
-                currency: "USD",
-                value: 
+        gtag('event', 'remove_from_cart', {
+            currency: "USD",
+            value: ''
         })
 
     })
