@@ -36,7 +36,7 @@ window.addEventListener("load", (event) => {
     }
 
     // add to cart click event on my catalog
-    $(".button.buy").click(function () {
+    $("button.buy").click(function () {
         const currentProductCard = $(this).parents('.product-card')
         console.log('add to cart button clicked on my catalog')
         console.log(currentProductCard)
@@ -56,7 +56,7 @@ window.addEventListener("load", (event) => {
     })
 
     // add-to-cart pdp page
-    $(".button.add-to-cart").click(function () {
+    $("button.add-to-cart").click(function () {
         console.log('add to cart button clicked on PDP page')
         console.log(productDetail)
         gtag('event', 'add_to_cart', {
