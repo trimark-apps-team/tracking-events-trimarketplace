@@ -176,6 +176,7 @@ window.addEventListener("load", (event) => {
             subTree: true
         }
         let observer = new MutationObserver(mCallback);
+        console.log(observer)
 
         function mCallback(mutations) {
             for (let mutation of mutations) {
@@ -185,7 +186,7 @@ window.addEventListener("load", (event) => {
             }
         }
 
-        observer.observe(mList, options);
+        observer.observe(mList[0], options);
 
     }, 5000);
 })
