@@ -156,6 +156,7 @@ window.addEventListener("load", (event) => {
 
 
 
+        // mini cart remove from cart
         $(".delete-orderline").click(function () {
             console.log('remove item clicked')
             const miniCartItem = $(this).parents('.mini-cart-contents .item')
@@ -167,6 +168,45 @@ window.addEventListener("load", (event) => {
             })
 
         })
+
+        const miniCartItemList = $('.mini-cart-contents .cart-items .items');
+
+        const observer = new MutationObserver((mutationsList, observer) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'childList') {
+                    console.log('A child node has been added or removed.');
+                    const nodes = mutation.addedNodes;
+                    nodes.forEach(node => {
+                        console.log(node)
+                        $(node).click(function () {
+                            console.log('remove item clicked')
+                            const miniCartItem = $(this).parents('.mini-cart-contents .item')
+                            let miniCartItemQuantity = parseFloat($(miniCartItem).find('.input-text').val()) || 1;
+
+                            gtag('event', 'remove_from_cart', {
+                                currency: "USD",
+                                value: ''
+                            })
+                        })
+
+                    });
+                }
+            }
+        });
+
+        observer.observe(miniCartItemList, {
+            attributes: false,
+            childList: true,
+            subtree: false
+        }
+        );
+
+
+
+
+
+
+
     }, 5000);
 })
 
@@ -193,3 +233,5 @@ function getCookie(cname) {
     }
     return "";
 }
+
+
