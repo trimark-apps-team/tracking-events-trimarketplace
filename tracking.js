@@ -180,7 +180,11 @@ window.addEventListener("load", (event) => {
 
         function mCallback(mutations) {
             for (let mutation of mutations) {
-                console.log(mutation)
+                if (mutation.type === 'childList') {
+                    console.log(mutation)
+                    console.log(mutation.addedNodes)
+                }
+
                 console.log('Mutation Detected: A child node has been added or removed.');
 
             }
