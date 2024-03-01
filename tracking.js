@@ -1,7 +1,6 @@
 window.addEventListener("load", (event) => {
-    // since we don't control how or when elements on the page render, wrap all events in a 5 second timeout for consistency
+    // since we don't control how or when elements on the page render, wrap all events except mutation observers in a 5 second timeout for consistency
     setTimeout(() => {
-        console.log(gtag)
 
         const productDetail = $(".product-detail")
         const productTitle = $(".product-title h1");
@@ -154,44 +153,6 @@ window.addEventListener("load", (event) => {
         }
 
 
-
-
-        // mini cart remove from cart
-        $(".delete-orderline").click(function () {
-            console.log('remove item clicked')
-            const miniCartItem = $(this).parents('.mini-cart-contents .item')
-            let miniCartItemQuantity = parseFloat($(miniCartItem).find('.input-text').val()) || 1;
-
-            gtag('event', 'remove_from_cart', {
-                currency: "USD",
-                value: ''
-            })
-
-        })
-
-        let mList = $('.mini-cart-contents .cart-items .items');
-        console.log('found mini cart list', mList)
-        let options = {
-            childList: true,
-            subTree: true
-        }
-        let observer = new MutationObserver(mCallback);
-        console.log(observer)
-
-        function mCallback(mutations) {
-            for (let mutation of mutations) {
-                if (mutation.type === 'childList') {
-                    console.log(mutation)
-                    console.log(mutation.addedNodes)
-                }
-
-                console.log('Mutation Detected: A child node has been added or removed.');
-
-            }
-        }
-
-        observer.observe(mList[0], options);
-
     }, 5000);
 })
 
@@ -219,4 +180,66 @@ function getCookie(cname) {
     return "";
 }
 
+
+
+
+// remove from cart events
+const domObserver = new MutationObserver(() => {
+    const deleteItem = $('.mini-cart-contents .delete-orderline');
+    const shoppingCarRemovalModalButton = $(".shopping-cart-item-removal-modal button")
+
+    if (deleteItem) {
+        for (var i = 0; i < deleteItem.length; i++) {
+            let item = $(deleteItem[i]).parents('.item')
+            let itemName = $(item).find('h4 a').text() || ''
+            let itemID = $(item).find('.item-number').text().replace(/[^.0-9]/g, '');
+            let itemQuantity = Number($(item).find('.quantity input').val())
+            let itemPrice = parseFloat($(item).find('.price-small').text().replace(/[^.0-9]/g, ''))
+            console.log(itemName, itemID, itemQuantity, itemPrice)
+            $(deleteItem[i]).unbind().click(function () {
+                gtag('event', 'remove_from_cart', {
+                    currency: "USD",
+                    value: itemPrice || 0.00,
+                    items: [
+                        {
+                            item_id: itemID || '',
+                            item_name: itemName || '',
+                            price: itemPrice || 0.00,
+                            quantity: itemQuantity || 1
+                        },
+                    ]
+                });
+            })
+        }
+    }
+
+    if (shoppingCarRemovalModalButton) {
+        let modalContent = $(shoppingCarRemovalModalButton).parents('.modal-body')
+        let itemName = $(modalContent).find('.product-name').text()
+        let itemID = $(modalContent).find('.number').text().replace(/[^.0-9]/g, '')
+        let htmlItemIDString = `.item-${itemID}`
+        let itemPrice = parseFloat($(htmlItemIDString).find('.price-small').text().replace(/[^.0-9]/g, ''))
+        let itemQuantity = Number($(htmlItemIDString).find('.quantity input').val())
+        console.log(itemName, itemID, itemQuantity, itemPrice)
+        $(shoppingCarRemovalModalButton).unbind().click(function () {
+            gtag('event', 'remove_from_cart', {
+                currency: "USD",
+                value: itemPrice || 0.00,
+                items: [
+                    {
+                        item_id: itemID || '',
+                        item_name: itemName || '',
+                        price: itemPrice || 0.00,
+                        quantity: itemQuantity || 1
+                    },
+                ]
+            });
+        })
+
+    }
+
+
+});
+
+domObserver.observe(document.body, { childList: true, subtree: true });
 
