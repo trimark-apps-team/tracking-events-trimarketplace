@@ -169,43 +169,23 @@ window.addEventListener("load", (event) => {
 
         })
 
-        const miniCartItemList = $('.mini-cart-contents .cart-items .items');
-
-        const observer = new MutationObserver((mutationsList, observer) => {
-            for (const mutation of mutationsList) {
-                if (mutation.type === 'childList') {
-                    console.log('A child node has been added or removed.');
-                    const nodes = mutation.addedNodes;
-                    nodes.forEach(node => {
-                        console.log(node)
-                        $(node).click(function () {
-                            console.log('remove item clicked')
-                            const miniCartItem = $(this).parents('.mini-cart-contents .item')
-                            let miniCartItemQuantity = parseFloat($(miniCartItem).find('.input-text').val()) || 1;
-
-                            gtag('event', 'remove_from_cart', {
-                                currency: "USD",
-                                value: ''
-                            })
-                        })
-
-                    });
-                }
-            }
-        });
-
-        observer.observe(miniCartItemList, {
-            attributes: false,
+        let mList = $('.mini-cart-contents .cart-items .items');
+        console.log('found mini cart list', mList)
+        options = {
             childList: true,
-            subtree: false
+            subTree: true
+        },
+            observer = new MutationObserver(mCallback);
+
+        function mCallback(mutations) {
+            for (let mutation of mutations) {
+                console.log(mutation)
+                console.log('Mutation Detected: A child node has been added or removed.');
+
+            }
         }
-        );
 
-
-
-
-
-
+        observer.observe(mList, options);
 
     }, 5000);
 })
