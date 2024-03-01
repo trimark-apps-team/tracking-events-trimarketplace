@@ -171,11 +171,11 @@ window.addEventListener("load", (event) => {
 
         let mList = $('.mini-cart-contents .cart-items .items');
         console.log('found mini cart list', mList)
-        options = {
+        let options = {
             childList: true,
             subTree: true
-        },
-            observer = new MutationObserver(mCallback);
+        }
+        let observer = new MutationObserver(mCallback);
 
         function mCallback(mutations) {
             for (let mutation of mutations) {
