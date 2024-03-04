@@ -250,8 +250,8 @@ window.addEventListener("load", (event) => {
         //record purchase
         if (window.location.href.includes('checkoutpage/confirmation')) {
             let items = JSON.parse(sessionStorage.getItem('checkout_items'))
-            let cartValue = sessionStorage.getItem('checkout_value')
-            let tax = sessionStorage.getItem('checkout_tax')
+            let cartValue = parseFloat(sessionStorage.getItem('checkout_value'))
+            let tax = parseFloat(sessionStorage.getItem('checkout_tax'))
             gtag("event", "purchase", {
                 // using date.now for transaction id since we dont have access to the order number after purchase in the ui
                 transaction_id: `T_${Date.now()}`,
