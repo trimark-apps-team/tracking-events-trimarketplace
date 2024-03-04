@@ -104,25 +104,6 @@ window.addEventListener("load", (event) => {
 
         }
 
-
-        // add to cart my catalog page
-        $(".buy").click(function () {
-            const currentProductCard = $(this).parents('.product-card')
-            gtag('event', 'add_to_cart', {
-                currency: "USD",
-                value: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
-                items: [
-                    {
-                        item_id: $(currentProductCard).attr('id') || '',
-                        item_name: $(currentProductCard).find(".product-description").text() || '',
-                        price: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
-                        quantity: Number($(currentProductCard).find(".controls .quantity .input-text").val()) || 1
-                    },
-                ]
-            });
-
-        })
-
         // add-to-cart pdp page
         $(".product-detail button").click(function () {
             gtag('event', 'add_to_cart', {
@@ -325,6 +306,7 @@ function getCookie(cname) {
 const domObserver = new MutationObserver(() => {
     const deleteItem = $('.mini-cart-contents .delete-orderline');
     const shoppingCarRemovalModalButton = $(".shopping-cart-item-removal-modal button")
+    const productCard = $('.product-list-container .product-card')
     if (deleteItem) {
         for (var i = 0; i < deleteItem.length; i++) {
             let item = $(deleteItem[i]).parents('.item')
@@ -402,6 +384,27 @@ const domObserver = new MutationObserver(() => {
             });
         })
 
+    }
+
+    // mycatalog product card
+    if (productCard) {
+        // add to cart my catalog page
+        $(".buy").click(function () {
+            const currentProductCard = $(this).parents('.product-card')
+            gtag('event', 'add_to_cart', {
+                currency: "USD",
+                value: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
+                items: [
+                    {
+                        item_id: $(currentProductCard).attr('id') || '',
+                        item_name: $(currentProductCard).find(".product-description").text() || '',
+                        price: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
+                        quantity: Number($(currentProductCard).find(".controls .quantity .input-text").val()) || 1
+                    },
+                ]
+            });
+
+        })
     }
 
 });
