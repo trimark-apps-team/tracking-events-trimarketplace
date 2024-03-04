@@ -78,11 +78,6 @@ window.addEventListener("load", (event) => {
             })
         }
 
-
-
-
-
-
         // first visit event. Fires only if user does not have site_visitor in localstorage
         var siteVisitor = localStorage.getItem('site_visitor')
         if (!siteVisitor) {
@@ -230,14 +225,10 @@ window.addEventListener("load", (event) => {
                 }
                 items.push(item)
                 if (orderlines.length - 1 === index) {
-                    console.log('loop ends');
                     sessionStorage.setItem('checkout_items', JSON.stringify(items))
                     sessionStorage.setItem('checkout_value', cartValue)
-                    if ($('.chrg-tax').length) {
-                        let tax = parseFloat($(".chrg-tax .amount").text().replace(/[^.0-9]/g, '')) || 0.00
-                        sessionStorage.setItem('checkout_tax', tax)
-                    }
-
+                    let tax = parseFloat($(".chrg-tax .amount").text().replace(/[^.0-9]/g, '')) || 0.00
+                    sessionStorage.setItem('checkout_tax', tax)
                 }
             })
         })
@@ -383,7 +374,6 @@ const domObserver = new MutationObserver(() => {
                 ]
             });
         })
-
     }
 
     // mycatalog product card
