@@ -239,7 +239,7 @@ window.addEventListener("load", (event) => {
         const shippingStepLink = document.querySelector(".shipping-step a")
         if (shippingStepLink && shippingStepLink.classList.contains('active')) {
             let items = JSON.parse(sessionStorage.getItem('checkout_items'))
-            let cartValue = sessionStorage.getItem('checkout_value')
+            let cartValue = parseFloat(sessionStorage.getItem('checkout_value'))
             gtag("event", "begin_checkout", {
                 currency: "USD",
                 value: cartValue || 0.00,
