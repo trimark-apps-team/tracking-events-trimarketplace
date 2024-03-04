@@ -2,6 +2,10 @@ window.addEventListener("load", (event) => {
     // since we don't control how or when elements on the page render, wrap all events except mutation observers in a 5 second timeout for consistency
     setTimeout(() => {
 
+        if (!window.location.href.includes('checkout')) {
+            sessionStorage.removeItem('checkout_items')
+            sessionStorage.removeItem('checkout_value')
+        }
         const productDetail = $(".product-detail")
         const productTitle = $(".product-title h1");
 
@@ -44,13 +48,13 @@ window.addEventListener("load", (event) => {
             console.log(currentProductCard)
             gtag('event', 'add_to_cart', {
                 currency: "USD",
-                value: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text()) || 0.00,
+                value: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
                 items: [
                     {
                         item_id: $(currentProductCard).attr('id') || '',
                         item_name: $(currentProductCard).find(".product-description").text() || '',
-                        price: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text()) || 0.00,
-                        quantity: parseFloat($(currentProductCard).find(".controls .quantity .input-text").val()) || 1
+                        price: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
+                        quantity: Number($(currentProductCard).find(".controls .quantity .input-text").val()) || 1
                     },
                 ]
             });
@@ -58,23 +62,58 @@ window.addEventListener("load", (event) => {
         })
 
         // add-to-cart pdp page
-
         $(".product-detail button").click(function () {
             console.log('add to cart button clicked on PDP page')
             console.log(productDetail)
             gtag('event', 'add_to_cart', {
                 currency: "USD",
-                value: parseFloat($(productDetail).find(".display-price h2").text()) || 0.00,
+                value: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
                 items: [
                     {
                         item_id: $(productDetail).find('.item-number-top span').text() || '',
                         item_name: $(productDetail).find(".product-description").text() || '',
-                        price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text()) || 0.00,
-                        quantity: parseFloat($(productDetail).find(".order-actions .input-text").val()) || 1
+                        price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
+                        quantity: Number($(productDetail).find(".order-actions .input-text").val()) || 1
                     },
                 ]
             });
         })
+
+
+
+
+        // quick order add to cart on cart page
+        let quickOrderaddToCartButton = $('.quick-order-entry-container #by-item-number .add-to-cart button')
+        console.log(quickOrderaddToCartButton)
+        quickOrderaddToCartButton.click(function () {
+            // item has been added to cart via quick entry
+            console.log('add to cart clicked')
+            const quickOrderItem = $(".quick-order-entry-container .quick-order-item-list .item-list .field .item-details-preview")
+            const quickOrderInformation = $(".quick-order-entry-container .quick-order-item-list .item-list .field .item-details-preview .item-preview .information")
+            let items = [];
+            console.log(quickOrderItem)
+            $(quickOrderInformation).each(function (index) {
+                let itemField = $(this).parents(".field")
+                let itemName = $(this).find('h4').text().replace(/[\t\n\r]/gm, '') || ''
+                let itemID = $(this).find('.item-number span').eq(1).text() || ''
+                let itemQuantity = Number($(itemField).find('.quantity input').val()) || 1
+                let item = {
+                    item_id: itemID,
+                    item_name: itemName,
+                    quantity: itemQuantity,
+                }
+                items.push(item)
+                if (quickOrderInformation.length - 1 === index) {
+                    console.log('loop ends');
+                    gtag('event', 'add_to_cart', {
+                        currency: "USD",
+                        value: parseFloat($(".order-summary-component .prices .amount").text().replace(/[^.0-9]/g, '')) || 0.00,
+                        items: items
+                    });
+                }
+            })
+        })
+
 
 
         // view item on pdp page
@@ -83,12 +122,12 @@ window.addEventListener("load", (event) => {
             console.log(productDetail)
             gtag('event', 'view_item', {
                 currency: "USD",
-                value: parseFloat($(productDetail).find(".display-price h2").text()) || 0.00,
+                value: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
                 items: [
                     {
                         item_id: $(productDetail).find('.item-number-top span').text() || '',
                         item_name: $(productDetail).find(".product-description").text() || '',
-                        price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text()) || 0.00,
+                        price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
                         quantity: 1
                     },
                 ]
@@ -103,12 +142,12 @@ window.addEventListener("load", (event) => {
             console.log(currentProductCard)
             gtag('event', 'select_item', {
                 currency: "USD",
-                value: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text()) || 0.00,
+                value: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
                 items: [
                     {
                         item_id: $(currentProductCard).attr('id') || '',
                         item_name: $(currentProductCard).find(".product-description").text() || '',
-                        price: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text()) || 0.00,
+                        price: parseFloat($(currentProductCard).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
                         quantity: 1
                     },
                 ]
@@ -136,11 +175,61 @@ window.addEventListener("load", (event) => {
 
         // view cart
         if (window.location.href.indexOf("shopping-cart") > -1) {
-            gtag('event', 'view_cart', {
-                'event_category': 'page view',
-            });
+            let orderlines = $(".orderline");
+            let items = [];
+
+            $(orderlines).each(function (index) {
+                let itemID = $(this).find('.info-container .item-number').text().replace(/[^.0-9]/g, '') || ''
+                let itemName = $(this).find('.product-name').text() || ''
+                let price = parseFloat($(this).find('.line-total .price-small').text().replace(/[^.0-9]/g, '')) || 0.00
+                let quantity = Number($(this).find('.quantity input').val()) || 1
+                let item = {
+                    item_id: itemID,
+                    item_name: itemName,
+                    price: price,
+                    quantity: quantity,
+                }
+                items.push(item)
+                if (orderlines.length - 1 === index) {
+                    console.log('loop ends');
+                    gtag('event', 'view_cart', {
+                        currency: "USD",
+                        value: parseFloat($(".order-summary-component .prices .amount").text().replace(/[^.0-9]/g, '')) || 0.00,
+                        items: items
+                    });
+
+                }
+            })
 
         }
+
+        // save cart items to session storage after clicking checkout
+        $(".order-summary-component button.continue").unbind().click(function (e) {
+            e.preventDefault()
+            console.log($(this))
+            let cartValue = parseFloat($(".order-summary-component .amount").text().replace(/[^.0-9]/g, '')) || 0.00
+            let orderlines = $(".orderline");
+            let items = [];
+            $(orderlines).each(function (index) {
+                let itemID = $(this).find('.info-container .item-number').text().replace(/[^.0-9]/g, '') || ''
+                let itemName = $(this).find('.product-name').text() || ''
+                let price = parseFloat($(this).find('.line-total .price-small').text().replace(/[^.0-9]/g, '')) || 0.00
+                let quantity = Number($(this).find('.quantity input').val()) || 1
+                let item = {
+                    item_id: itemID,
+                    item_name: itemName,
+                    price: price,
+                    quantity: quantity,
+                }
+                items.push(item)
+                if (orderlines.length - 1 === index) {
+                    console.log('loop ends');
+                    sessionStorage.setItem('checkout_items', JSON.stringify(items))
+                    sessionStorage.setItem('checkout_value', cartValue)
+
+                }
+            })
+        })
 
 
 
@@ -187,7 +276,6 @@ function getCookie(cname) {
 const domObserver = new MutationObserver(() => {
     const deleteItem = $('.mini-cart-contents .delete-orderline');
     const shoppingCarRemovalModalButton = $(".shopping-cart-item-removal-modal button")
-
     if (deleteItem) {
         for (var i = 0; i < deleteItem.length; i++) {
             let item = $(deleteItem[i]).parents('.item')
@@ -210,6 +298,34 @@ const domObserver = new MutationObserver(() => {
                     ]
                 });
             })
+
+            $('.mini-cart-container .go-to-checkout').unbind().click(function () {
+                console.log('saving checkout data in session storage')
+                let items = []
+                let cartValue = parseFloat($('.mini-cart-contents .mini-cart-total .sub-total .total-price').text().replace(/[^.0-9]/g, '')) || 0.00
+                let products = $(".mini-cart-contents .item")
+                $(products).each(function (index) {
+                    let itemName = $(this).find('h4 a').text() || ''
+                    let itemID = $(this).find('.item-number').text().replace(/[^.0-9]/g, '');
+                    let itemQuantity = Number($(this).find('.quantity input').val())
+                    let itemPrice = parseFloat($(this).find('.price-small').text().replace(/[^.0-9]/g, ''))
+                    let item = {
+                        item_id: itemID || '',
+                        item_name: itemName || '',
+                        price: itemPrice || 0.00,
+                        quantity: itemQuantity || 1
+                    }
+                    items.push(item)
+
+                    if ($(products).length - 1 === index) {
+                        sessionStorage.setItem('checkout_items', JSON.stringify(items))
+                        sessionStorage.setItem('checkout_value', cartValue)
+                    }
+                })
+
+            })
+
+
         }
     }
 
@@ -237,7 +353,6 @@ const domObserver = new MutationObserver(() => {
         })
 
     }
-
 
 });
 
