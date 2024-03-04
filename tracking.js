@@ -389,7 +389,7 @@ const domObserver = new MutationObserver(() => {
     // mycatalog product card
     if (productCard) {
         // add to cart my catalog page
-        $(".buy").click(function () {
+        $(".buy").unbind().click(function () {
             const currentProductCard = $(this).parents('.product-card')
             gtag('event', 'add_to_cart', {
                 currency: "USD",
