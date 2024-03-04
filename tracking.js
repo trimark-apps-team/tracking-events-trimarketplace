@@ -35,7 +35,7 @@ window.addEventListener("load", (event) => {
         if (window.location.href.includes('ecom-search')) {
             let searchResultsTitle = $(".parent-category-title .name").text() || ''
             let items = []
-            $('.product-card').each(function () {
+            $('.product-card').each(function (index) {
                 let item = {
                     item_id: $(this).attr('id') || '',
                     item_name: $(this).find(".product-description").text() || '',
@@ -61,7 +61,7 @@ window.addEventListener("load", (event) => {
         if (window.location.href.includes('mycatalog') && !window.location.href.includes('ecom-search')) {
             let searchResultsTitle = $(".product-list-header .category-name h1").text() || ''
             let items = []
-            $('.product-card').each(function () {
+            $('.product-card').each(function (index) {
                 let item = {
                     item_id: $(this).attr('id') || '',
                     item_name: $(this).find(".product-description").text() || '',
@@ -94,11 +94,13 @@ window.addEventListener("load", (event) => {
 
         // successful login check for .user-info-logged-in class on the my account page and set cookie to only fire once per session
         var loggedInClass = document.querySelector('.user-info-logged-in')
-        if (loggedInClass) {
+        var loggedIn = getCookie("logged_in");
+        if (loggedInClass && !loggedIn) {
             gtag('event', 'login', {
                 'event_category': 'form submission',
                 'event_label': 'login form submit'
             });
+            setCookie('logged_in')
 
         }
 
