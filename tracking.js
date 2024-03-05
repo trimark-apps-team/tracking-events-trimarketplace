@@ -249,6 +249,7 @@ window.addEventListener("load", (event) => {
 
         //record purchase
         if (window.location.href.includes('checkoutpage/confirmation')) {
+            console.log(parseFloat(sessionStorage.getItem('checkout_value')))
             let items = JSON.parse(sessionStorage.getItem('checkout_items'))
             let cartValue = parseFloat(sessionStorage.getItem('checkout_value'))
             let tax = parseFloat(sessionStorage.getItem('checkout_tax'))
@@ -323,7 +324,6 @@ const domObserver = new MutationObserver(() => {
 
             // save checkout data in session storage when selecting checkout in mini cart
             $('.mini-cart-container .go-to-checkout').unbind().click(function () {
-                console.log('saving checkout data in session storage')
                 let items = []
                 let cartValue = parseFloat($('.mini-cart-contents .mini-cart-total .sub-total .total-price').text().replace(/[^.0-9]/g, '')) || 0.00
                 let products = $(".mini-cart-contents .item")
