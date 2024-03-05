@@ -49,7 +49,7 @@ window.addEventListener("load", (event) => {
                         items: items
                     });
                     gtag('event', 'view_search_results', {
-                        'event_category': 'site search results',
+                        'event_category': 'site_search_results',
                         'event_label': searchResultsTitle
 
                     })
@@ -195,7 +195,6 @@ window.addEventListener("load", (event) => {
                 }
                 items.push(item)
                 if (orderlines.length - 1 === index) {
-                    console.log('loop ends');
                     gtag('event', 'view_cart', {
                         currency: "USD",
                         value: parseFloat($(".order-summary-component .prices .amount").text().replace(/[^.0-9]/g, '')) || 0.00,
@@ -242,8 +241,8 @@ window.addEventListener("load", (event) => {
             let cartValue = parseFloat(sessionStorage.getItem('checkout_value'))
             gtag("event", "begin_checkout", {
                 currency: "USD",
-                value: cartValue || 0.00,
-                items: items || []
+                value: cartValue,
+                items: items
             });
         }
 
@@ -252,12 +251,10 @@ window.addEventListener("load", (event) => {
             console.log(parseFloat(sessionStorage.getItem('checkout_value')))
             let items = JSON.parse(sessionStorage.getItem('checkout_items'))
             let cartValue = parseFloat(sessionStorage.getItem('checkout_value'))
-            let tax = parseFloat(sessionStorage.getItem('checkout_tax'))
             gtag("event", "purchase", {
                 // using date.now for transaction id since we dont have access to the order number after purchase in the ui
                 transaction_id: `T_${Date.now()}`,
-                value: cartValue || 0.00,
-                tax: tax,
+                value: cartValue,
                 currency: "USD",
                 items: items
             });
