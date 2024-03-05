@@ -1,3 +1,7 @@
+
+window.dataLayer = window.dataLayer || [];
+function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-ETJTNZLM20', { 'debug_mode': true });
+
 window.addEventListener("load", (event) => {
     // since we don't control how or when elements on the page render, wrap all events except mutation observers in a 5 second timeout for consistency
     setTimeout(() => {
