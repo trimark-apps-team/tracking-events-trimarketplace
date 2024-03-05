@@ -1,8 +1,9 @@
 
 window.dataLayer = window.dataLayer || [];
-function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-ETJTNZLM20', { 'debug_mode': true });
+function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-ETJTNZLM20');
 
 window.addEventListener("load", (event) => {
+    console.log('window loaded', window.location.href)
     // since we don't control how or when elements on the page render, wrap all events except mutation observers in a 5 second timeout for consistency
     setTimeout(() => {
 
@@ -252,8 +253,7 @@ window.addEventListener("load", (event) => {
 
         //record purchase
         if (window.location.href.includes('checkoutpage/confirmation')) {
-            window.dataLayer = window.dataLayer || [];
-            function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-ETJTNZLM20', { 'debug_mode': true });
+
             console.log(parseFloat(sessionStorage.getItem('checkout_value')))
             let items = JSON.parse(sessionStorage.getItem('checkout_items'))
             let cartValue = parseFloat(sessionStorage.getItem('checkout_value'))
