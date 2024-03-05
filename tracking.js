@@ -301,7 +301,7 @@ const domObserver = new MutationObserver(() => {
     const deleteItem = $('.mini-cart-contents .delete-orderline');
     const shoppingCarRemovalModalButton = $(".shopping-cart-item-removal-modal button")
     const productCard = $('.product-list-container .product-card')
-    const checkoutConfirmation = $('.confirmation-container')
+    const checkoutConfirmation = $('.checkout-container .confirmation-container')
     if (deleteItem) {
         for (var i = 0; i < deleteItem.length; i++) {
             let item = $(deleteItem[i]).parents('.item')
