@@ -252,18 +252,18 @@ window.addEventListener("load", (event) => {
         }
 
         //record purchase
-        if (window.location.href.includes('checkoutpage/confirmation')) {
-            console.log(parseFloat(sessionStorage.getItem('checkout_value')))
-            let items = JSON.parse(sessionStorage.getItem('checkout_items'))
-            let cartValue = parseFloat(sessionStorage.getItem('checkout_value'))
-            gtag("event", "purchase", {
-                // using date.now for transaction id since we dont have access to the order number after purchase in the ui
-                transaction_id: `T_${Date.now()}`,
-                value: cartValue,
-                currency: "USD",
-                items: items
-            });
-        }
+        // if (window.location.href.includes('checkoutpage/confirmation')) {
+        //     console.log(parseFloat(sessionStorage.getItem('checkout_value')))
+        //     let items = JSON.parse(sessionStorage.getItem('checkout_items'))
+        //     let cartValue = parseFloat(sessionStorage.getItem('checkout_value'))
+        //     gtag("event", "purchase", {
+        //         // using date.now for transaction id since we dont have access to the order number after purchase in the ui
+        //         transaction_id: `T_${Date.now()}`,
+        //         value: cartValue,
+        //         currency: "USD",
+        //         items: items
+        //     });
+        // }
 
 
     }, 5000);
@@ -301,6 +301,7 @@ const domObserver = new MutationObserver(() => {
     const deleteItem = $('.mini-cart-contents .delete-orderline');
     const shoppingCarRemovalModalButton = $(".shopping-cart-item-removal-modal button")
     const productCard = $('.product-list-container .product-card')
+    const checkoutConfirmation = $('.confirmation-container')
     if (deleteItem) {
         for (var i = 0; i < deleteItem.length; i++) {
             let item = $(deleteItem[i]).parents('.item')
@@ -397,6 +398,20 @@ const domObserver = new MutationObserver(() => {
             });
 
         })
+    }
+
+    if (checkoutConfirmation) {
+        console.log(parseFloat(sessionStorage.getItem('checkout_value')))
+        let items = JSON.parse(sessionStorage.getItem('checkout_items'))
+        let cartValue = parseFloat(sessionStorage.getItem('checkout_value'))
+        gtag("event", "purchase", {
+            // using date.now for transaction id since we dont have access to the order number after purchase in the ui
+            transaction_id: `T_${Date.now()}`,
+            value: cartValue,
+            currency: "USD",
+            items: items
+        });
+
     }
 
 });
