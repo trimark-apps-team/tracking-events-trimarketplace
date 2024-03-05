@@ -400,7 +400,7 @@ const domObserver = new MutationObserver(() => {
         })
     }
 
-    if (checkoutConfirmation) {
+    if (checkoutConfirmation && window.location.href.includes('checkoutpage/confirmation')) {
         console.log(parseFloat(sessionStorage.getItem('checkout_value')))
         let items = JSON.parse(sessionStorage.getItem('checkout_items'))
         let cartValue = parseFloat(sessionStorage.getItem('checkout_value'))
