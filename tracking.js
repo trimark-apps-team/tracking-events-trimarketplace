@@ -250,23 +250,7 @@ window.addEventListener("load", (event) => {
                 items: items
             });
         }
-
-        //record purchase
-        // if (window.location.href.includes('checkoutpage/confirmation')) {
-        //     console.log(parseFloat(sessionStorage.getItem('checkout_value')))
-        //     let items = JSON.parse(sessionStorage.getItem('checkout_items'))
-        //     let cartValue = parseFloat(sessionStorage.getItem('checkout_value'))
-        //     gtag("event", "purchase", {
-        //         // using date.now for transaction id since we dont have access to the order number after purchase in the ui
-        //         transaction_id: `T_${Date.now()}`,
-        //         value: cartValue,
-        //         currency: "USD",
-        //         items: items
-        //     });
-        // }
-
-
-    }, 5000);
+    }, 2000);
 })
 
 
