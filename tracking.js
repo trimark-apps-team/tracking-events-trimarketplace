@@ -4,6 +4,7 @@ window.addEventListener("load", (event) => {
         sessionStorage.removeItem('checkout_items')
         sessionStorage.removeItem('checkout_value')
         sessionStorage.removeItem('checkout_tax')
+        sessionStorage.removeItem('purchased')
     }
     const productDetail = $(".product-detail")
 
@@ -19,6 +20,7 @@ window.addEventListener("load", (event) => {
     }
 
 
+
     // search event
     $(".search-input .header-search a").unbind().click(function () {
         let inputVal = $("#header-search").val();
@@ -29,52 +31,6 @@ window.addEventListener("load", (event) => {
         });
     })
 
-    // search results list event
-    if (window.location.href.includes('ecom-search')) {
-        let searchResultsTitle = $(".parent-category-title .name").text() || ''
-        let items = []
-        $('.product-card').each(function (index) {
-            let item = {
-                item_id: $(this).attr('id') || '',
-                item_name: $(this).find(".product-description").text() || '',
-                price: parseFloat($(this).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
-                quantity: Number($(this).find(".controls .quantity .input-text").val()) || 1
-            }
-            items.push(item)
-            if ($('.product-card').length - 1 === index) {
-                gtag("event", "view_item_list", {
-                    item_list_name: searchResultsTitle,
-                    items: items
-                });
-                gtag('event', 'view_search_results', {
-                    'event_category': 'site_search_results',
-                    'event_label': searchResultsTitle
-
-                })
-            }
-        })
-    }
-
-    // my catalog results list
-    if (window.location.href.includes('mycatalog') && !window.location.href.includes('ecom-search')) {
-        let searchResultsTitle = $(".product-list-header .category-name h1").text() || ''
-        let items = []
-        $('.product-card').each(function (index) {
-            let item = {
-                item_id: $(this).attr('id') || '',
-                item_name: $(this).find(".product-description").text() || '',
-                price: parseFloat($(this).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
-                quantity: Number($(this).find(".controls .quantity .input-text").val()) || 1
-            }
-            items.push(item)
-            if ($('.product-card').length - 1 === index) {
-                gtag("event", "view_item_list", {
-                    item_list_name: searchResultsTitle,
-                    items: items
-                });
-            }
-        })
-    }
 
     // first visit event. Fires only if user does not have site_visitor in localstorage
     var siteVisitor = localStorage.getItem('site_visitor')
@@ -94,7 +50,6 @@ window.addEventListener("load", (event) => {
             'event_label': 'login form submit'
         });
         setCookie('logged_in')
-
     }
 
     // add-to-cart pdp page
@@ -206,9 +161,9 @@ window.addEventListener("load", (event) => {
     }
 
     // save cart items to session storage after clicking checkout
-    $(".order-summary-component button.continue").unbind().click(function () {
-        let cartValue = parseFloat($(".order-summary-component .amount").text().replace(/[^.0-9]/g, '')) || 0.00
-        let orderlines = $(".orderline");
+    $(".order-summary-col .order-summary-component .btn-container button.continue").live('click', function () {
+        let cartValue = parseFloat($(".order-summary-col .order-summary-component .amount").text().replace(/[^.0-9]/g, '')) || 0.00
+        let orderlines = $(".order-summary-col .order-summary-component .orderline");
         let items = [];
         $(orderlines).each(function (index) {
             let itemID = $(this).find('.info-container .item-number').text().replace(/[^.0-9]/g, '') || ''
@@ -229,6 +184,7 @@ window.addEventListener("load", (event) => {
                 sessionStorage.setItem('checkout_tax', tax)
             }
         })
+
     })
 
 
@@ -376,19 +332,70 @@ const domObserver = new MutationObserver(() => {
             });
 
         })
+        // my catalog results list
+        if (window.location.href.includes('mycatalog') && !window.location.href.includes('ecom-search')) {
+            let searchResultsTitle = $(".product-list-header .category-name h1").text() || ''
+            let items = []
+            $('.product-card').each(function (index) {
+                let item = {
+                    item_id: $(this).attr('id') || '',
+                    item_name: $(this).find(".product-description").text() || '',
+                    price: parseFloat($(this).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
+                    quantity: Number($(this).find(".controls .quantity .input-text").val()) || 1
+                }
+                items.push(item)
+                if ($('.product-card').length - 1 === index) {
+                    gtag("event", "view_item_list", {
+                        item_list_name: searchResultsTitle,
+                        items: items
+                    });
+                }
+            })
+        }
+
+        // search results list event
+        if (window.location.href.includes('ecom-search')) {
+            let searchResultsTitle = $(".parent-category-title .name").text() || ''
+            let items = []
+            $('.product-card').each(function (index) {
+                let item = {
+                    item_id: $(this).attr('id') || '',
+                    item_name: $(this).find(".product-description").text() || '',
+                    price: parseFloat($(this).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
+                    quantity: Number($(this).find(".controls .quantity .input-text").val()) || 1
+                }
+                items.push(item)
+                if ($('.product-card').length - 1 === index) {
+                    gtag("event", "view_item_list", {
+                        item_list_name: searchResultsTitle,
+                        items: items
+                    });
+                    gtag('event', 'view_search_results', {
+                        'event_category': 'site_search_results',
+                        'event_label': searchResultsTitle
+
+                    })
+                }
+            })
+        }
     }
 
     if (checkoutConfirmation && window.location.href.includes('checkoutpage/confirmation')) {
         console.log(parseFloat(sessionStorage.getItem('checkout_value')))
         let items = JSON.parse(sessionStorage.getItem('checkout_items'))
         let cartValue = parseFloat(sessionStorage.getItem('checkout_value'))
-        gtag("event", "purchase", {
-            // using date.now for transaction id since we dont have access to the order number after purchase in the ui
-            transaction_id: `T_${Date.now()}`,
-            value: cartValue,
-            currency: "USD",
-            items: items
-        });
+        if (!sessionStorage.getItem('purchased')) {
+            gtag("event", "purchase", {
+                // using date.now for transaction id since we dont have access to the order number after purchase in the ui
+                transaction_id: `T_${Date.now()}`,
+                value: cartValue,
+                currency: "USD",
+                items: items
+            });
+            sessionStorage.setItem('purchased', true);
+        }
+
+
 
     }
 
