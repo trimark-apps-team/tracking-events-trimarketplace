@@ -147,6 +147,62 @@ window.addEventListener("load", (event) => {
             })
         })
 
+        // saved cart add to cart events
+        if ($("h1.page-title").text().toLowerCase() === 'my saved cart') {
+
+            console.log('on saved cart page')
+
+            //cart icon add to cart button
+            $(".cart-with-icon.orderline-add-cart-btn").unbind().click(function () {
+                console.log('saved to cart cart icon button clicked')
+                let item = $(this).parents('.item')
+                let itemValue = parseFloat(item.find(".qty-total-container .total-amount").text().replace(/[^.0-9]/g, '')) || 0.00
+                let itemQuantity = Number(item.find(".quantity input").val()) || 1
+                let itemPrice = parseFloat(item.find(".product-info .pricing .price").text().replace(/[^.0-9]/g, '')) || 0.00
+                let itemId = item.find(".product-info .item-num .value").text().replace(/[^.0-9]/g, '') || ''
+                let itemName = item.find(".product-info .product-name").text() || ''
+                gtag('event', "add_to_cart", {
+                    currency: "USD",
+                    value: itemValue,
+                    items: [
+                        {
+                            item_id: itemId,
+                            item_name: itemName,
+                            price: itemPrice,
+                            quantity: itemQuantity
+                        },
+                    ]
+                })
+            })
+
+            // add to cart button order summary (adds everything in saved cart list)
+            $(".reorder-modal .btn-wrapper button.add-to-cart").unbind().click(function () {
+                console.log('my saved cart order summary button clicked')
+                let products = $(".orderlines .orderline .item")
+                items = []
+                products.each(function (index) {
+                    let itemQuantity = Number($(this).find(".quantity input").val()) || 1
+                    let itemPrice = parseFloat($(this).find(".product-info .pricing .price").text().replace(/[^.0-9]/g, '')) || 0.00
+                    let itemId = $(this).find(".product-info .item-num .value").text().replace(/[^.0-9]/g, '') || ''
+                    let itemName = $(this).find(".product-info .product-name").text() || ''
+                    items.push({
+                        item_id: itemId,
+                        item_name: itemName,
+                        price: itemPrice,
+                        quantity: itemQuantity
+                    })
+
+                    if (products.length - 1 === index) {
+                        gtag('event', 'add_to_cart', {
+                            currency: "USD",
+                            value: parseFloat($(".order-summary-component .prices .amount").text().replace(/[^.0-9]/g, '')) || 0.00,
+                            items: items
+                        });
+                    }
+                })
+            })
+        }
+
 
 
 
@@ -430,61 +486,7 @@ const domObserver = new MutationObserver(() => {
         }
     }
 
-    // saved cart add to cart events
-    if ($("h1.page-title").text().toLowerCase() === 'my saved cart') {
 
-        console.log('on saved cart page')
-
-        //cart icon add to cart button
-        $(".cart-with-icon.orderline-add-cart-btn").unbind().click(function () {
-            console.log('saved to cart cart icon button clicked')
-            let item = $(this).parents('.item')
-            let itemValue = parseFloat(item.find(".qty-total-container .total-amount").text().replace(/[^.0-9]/g, '')) || 0.00
-            let itemQuantity = Number(item.find(".quantity input").val()) || 1
-            let itemPrice = parseFloat(item.find(".product-info .pricing .price").text().replace(/[^.0-9]/g, '')) || 0.00
-            let itemId = item.find(".product-info .item-num .value").text().replace(/[^.0-9]/g, '') || ''
-            let itemName = item.find(".product-info .product-name").text() || ''
-            gtag('event', "add_to_cart", {
-                currency: "USD",
-                value: itemValue,
-                items: [
-                    {
-                        item_id: itemId,
-                        item_name: itemName,
-                        price: itemPrice,
-                        quantity: itemQuantity
-                    },
-                ]
-            })
-        })
-
-        // add to cart button order summary (adds everything in saved cart list)
-        $(".order-summary-region .order-summary-component .btn-wrapper button.continue").unbind().click(function () {
-            console.log('my saved cart order summary button clicked')
-            let products = $(".orderlines .orderline .item")
-            items = []
-            products.each(function (index) {
-                let itemQuantity = Number($(this).find(".quantity input").val()) || 1
-                let itemPrice = parseFloat($(this).find(".product-info .pricing .price").text().replace(/[^.0-9]/g, '')) || 0.00
-                let itemId = $(this).find(".product-info .item-num .value").text().replace(/[^.0-9]/g, '') || ''
-                let itemName = $(this).find(".product-info .product-name").text() || ''
-                items.push({
-                    item_id: itemId,
-                    item_name: itemName,
-                    price: itemPrice,
-                    quantity: itemQuantity
-                })
-
-                if (products.length - 1 === index) {
-                    gtag('event', 'add_to_cart', {
-                        currency: "USD",
-                        value: parseFloat($(".order-summary-component .prices .amount").text().replace(/[^.0-9]/g, '')) || 0.00,
-                        items: items
-                    });
-                }
-            })
-        })
-    }
 
 });
 
