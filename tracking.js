@@ -475,18 +475,14 @@ const domObserver = new MutationObserver(() => {
                     quantity: itemQuantity
                 })
 
-                if (quickOrderInformation.length - 1 === index) {
+                if (products.length - 1 === index) {
                     gtag('event', 'add_to_cart', {
                         currency: "USD",
                         value: parseFloat($(".order-summary-component .prices .amount").text().replace(/[^.0-9]/g, '')) || 0.00,
                         items: items
                     });
                 }
-
             })
-
-
-
         })
     }
 
