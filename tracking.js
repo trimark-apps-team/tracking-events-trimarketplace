@@ -177,7 +177,6 @@ window.addEventListener("load", (event) => {
 
             // add to cart button order summary (adds everything in saved cart list)
             $(".reorder-modal .btn-wrapper button.add-to-cart").unbind().click(function () {
-                console.log('my saved cart order summary button clicked')
                 let products = $(".orderlines .orderline .item")
                 items = []
                 products.each(function (index) {
@@ -204,8 +203,33 @@ window.addEventListener("load", (event) => {
         }
 
 
-
-
+        // wishlist page add to cart modal (adds all products in wishlist to cart)
+        if (window.location.href.includes('favorite-details') && $(".order-summary-component header h3").text().toLowerCase() == 'wishlist summary') {
+            $(".reorder-modal .btn-wrapper button.add-to-cart").unbind().click(function () {
+                console.log('wish list add to cart clicked')
+                let products = $(".product-list-container .card")
+                let items = []
+                let totalValue = 0;
+                products.each(function (index) {
+                    let item = {
+                        item_id: $(this).attr('id') || '',
+                        item_name: $(this).find(".product-description").text() || '',
+                        price: parseFloat($(this).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
+                        quantity: Number($(this).find(".controls .quantity .input-text").val()) || 1
+                    }
+                    totalValue += item.price
+                    items.push(item)
+                    if (products.length - 1 === index) {
+                        console.log('totalValue', totalValue)
+                        gtag('event', 'add_to_cart', {
+                            currency: "USD",
+                            value: totalValue,
+                            items: items
+                        });
+                    }
+                })
+            })
+        }
 
 
         // view item on pdp page
