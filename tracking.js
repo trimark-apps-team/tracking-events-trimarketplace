@@ -442,7 +442,7 @@ const domObserver = new MutationObserver(() => {
             let itemValue = parseFloat(item.find(".qty-total-container .total-amount").text().replace(/[^.0-9]/g, '')) || 0.00
             let itemQuantity = Number(item.find(".quantity input").val()) || 1
             let itemPrice = parseFloat(item.find(".product-info .pricing .price").text().replace(/[^.0-9]/g, '')) || 0.00
-            let itemId = item.find(".product-info .item-num .value").text().replace.replace(/[^.0-9]/g, '') || ''
+            let itemId = item.find(".product-info .item-num .value").text().replace(/[^.0-9]/g, '') || ''
             let itemName = item.find(".product-info .product-name").text() || ''
             gtag('event', "add_to_cart", {
                 currency: "USD",
@@ -466,7 +466,7 @@ const domObserver = new MutationObserver(() => {
             products.each(function (index) {
                 let itemQuantity = Number($(this).find(".quantity input").val()) || 1
                 let itemPrice = parseFloat($(this).find(".product-info .pricing .price").text().replace(/[^.0-9]/g, '')) || 0.00
-                let itemId = $(this).find(".product-info .item-num .value").text().replace.replace(/[^.0-9]/g, '') || ''
+                let itemId = $(this).find(".product-info .item-num .value").text().replace(/[^.0-9]/g, '') || ''
                 let itemName = $(this).find(".product-info .product-name").text() || ''
                 items.push({
                     item_id: itemId,
