@@ -266,6 +266,41 @@ window.addEventListener("load", (event) => {
 
         }
 
+
+        // begin checkout event
+        const shippingStep = $('.checkout-container .checkout-container')
+        if (shippingStep && window.location.href.includes('checkoutpage/deliverymethod')) {
+            $.getJSON('/delegate/ecom-api/orders/current', (data) => {
+                let orderLines = data.orderLines
+                let totalCartPrice = data.totalPrice
+                let ecommItems = []
+                orderLines.forEach((orderLine, index) => {
+                    let item = {
+                        item_id: orderLine.item.itemNumber,
+                        item_name: orderLine.item.name,
+                        price: orderLine.lineAmounts.net,
+                        quantity: orderLine.quantity
+                    }
+                    ecommItems.push(item)
+                    if (orderLines.length - 1 === index) {
+                        if (!sessionStorage.getItem('began_checkout')) {
+                            gtag('event', 'begin_checkout', {
+                                currency: "USD",
+                                value: totalCartPrice || 0.00,
+                                items: ecommItems
+                            });
+
+                            sessionStorage.setItem('checkout_items', JSON.stringify(ecommItems))
+                            sessionStorage.setItem('checkout_value', totalCartPrice)
+                            sessionStorage.setItem('began_checkout', true)
+                        }
+                    }
+
+                })
+
+            });
+        }
+
     }, 2000);
 })
 
@@ -302,8 +337,6 @@ const domObserver = new MutationObserver(() => {
     const shoppingCarRemovalModalButton = $(".shopping-cart-item-removal-modal button")
     const productCard = $('.product-list-container .product-card')
     const checkoutConfirmation = $('.checkout-container .confirmation-container')
-    const reviewOrder = $('.checkout-container .review-container')
-    const shippingStep = $('.checkout-container .checkout-container')
     if (deleteItem) {
         for (var i = 0; i < deleteItem.length; i++) {
             let item = $(deleteItem[i]).parents('.item')
@@ -373,55 +406,18 @@ const domObserver = new MutationObserver(() => {
         })
     }
 
-    // begin checkout event
-    if (shippingStep && window.location.href.includes('checkoutpage/deliverymethod')) {
-        $.getJSON('/delegate/ecom-api/orders/current', (data) => {
-            let orderLines = data.orderLines
-            let totalCartPrice = data.totalPrice
-            let ecommItems = []
-            orderLines.forEach((orderLine, index) => {
-                let item = {
-                    item_id: orderLine.item.itemNumber,
-                    item_name: orderLine.item.name,
-                    price: orderLine.lineAmounts.net,
-                    quantity: orderLine.quantity
-                }
-                ecommItems.push(item)
-                if (orderLines.length - 1 === index) {
-                    gtag('event', 'begin_checkout', {
-                        currency: "USD",
-                        value: totalCartPrice || 0.00,
-                        items: ecommItems
-                    });
-
-                    sessionStorage.setItem('checkout_items', JSON.stringify(ecommItems))
-                    sessionStorage.setItem('checkout_value', totalCartPrice)
-                    sessionStorage.setItem('began_checkout', true)
-
-                }
-
-            })
-
-        });
-    }
-
-    // save the grandtotal to session storage for purchases
-    if (reviewOrder && window.location.href.includes('checkoutpage/review')) {
-        $.getJSON('/delegate/ecom-api/orders/current', (data) => {
-            sessionStorage.setItem('checkout_value', data.grandTotal)
-        });
-    }
-
 
     //purchase
     if (checkoutConfirmation && window.location.href.includes('checkoutpage/confirmation')) {
         let items = JSON.parse(sessionStorage.getItem('checkout_items'))
-        let cartValue = parseFloat(sessionStorage.getItem('checkout_value'))
+        let grandTotal = parseFloat($(".order-summary-component .total .amount").text().replace(/[^.0-9]/g, '')) || 0.00
+        parseFloat(sessionStorage.getItem('checkout_value'))
+
         if (!sessionStorage.getItem('purchased')) {
             gtag("event", "purchase", {
                 // using date.now for transaction id since we dont have access to the order number after purchase in the ui
                 transaction_id: `T_${Date.now()}`,
-                value: cartValue,
+                value: grandTotal,
                 currency: "USD",
                 items: items
             });
