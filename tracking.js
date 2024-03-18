@@ -5,6 +5,7 @@ window.addEventListener("load", (event) => {
         if (!window.location.href.includes('checkout')) {
             sessionStorage.removeItem('checkout_items')
             sessionStorage.removeItem('checkout_value')
+            sessionStorage.removeItem('checkout_tax')
             sessionStorage.removeItem('purchased')
         }
         const productDetail = $(".product-detail")
@@ -265,66 +266,42 @@ window.addEventListener("load", (event) => {
 
         }
 
-    }, 2000);
-})
 
+        // begin checkout event
+        const shippingStepLink = document.querySelector(".shipping-step a")
+        if (shippingStepLink && shippingStepLink.classList.contains('active')) {
+            $.getJSON('/delegate/ecom-api/orders/current', (data) => {
+                let orderLines = data.orderLines
+                let totalCartPrice = data.totalPrice
+                let ecommItems = []
+                orderLines.forEach((orderLine, index) => {
+                    let item = {
+                        item_id: orderLine.item.itemNumber,
+                        item_name: orderLine.item.name,
+                        price: orderLine.lineAmounts.net,
+                        quantity: orderLine.quantity
+                    }
+                    ecommItems.push(item)
+                    if (orderLines.length - 1 === index) {
+                        gtag('event', 'begin_checkout', {
+                            currency: "USD",
+                            value: totalCartPrice || 0.00,
+                            items: ecommItems
+                        });
 
+                        sessionStorage.setItem('checkout_items', JSON.stringify(ecommItems))
+                        sessionStorage.setItem('checkout_value', totalCartPrice)
 
-// checkout events use hashchange to run events
+                    }
 
-$(window).hashchange(function () {
-    // begin checkout
-    if (window.location.hash.includes('#checkoutpage/deliverymethod')) {
-        $.getJSON('/delegate/ecom-api/orders/current', (data) => {
-            let orderLines = data.orderLines
-            let totalCartPrice = data.totalPrice
-            let ecommItems = []
-            orderLines.forEach((orderLine, index) => {
-                let item = {
-                    item_id: orderLine.item.itemNumber,
-                    item_name: orderLine.item.name,
-                    price: orderLine.lineAmounts.net,
-                    quantity: orderLine.quantity
-                }
-                ecommItems.push(item)
-                if (orderLines.length - 1 === index) {
-                    gtag('event', 'begin_checkout', {
-                        currency: "USD",
-                        value: totalCartPrice || 0.00,
-                        items: ecommItems
-                    });
+                })
 
-                    sessionStorage.setItem('checkout_items', JSON.stringify(ecommItems))
-                    sessionStorage.setItem('checkout_value', totalCartPrice)
-
-                }
-
-            })
-
-        });
-    }
-
-    // set the grandtotal amount to checkout_value session storage on review step
-    if (window.location.hash.includes('#checkoutpage/review')) {
-        $.getJSON('/delegate/ecom-api/orders/current', (data) => {
-            let grandTotal = data.grandTotal
-            sessionStorage.setItem('checkout_value', grandTotal)
-        })
-    }
-
-    if (window.location.hash.includes('#checkoutpage/confirmation')) {
-        let items = JSON.parse(sessionStorage.getItem('checkout_items'))
-        let checkoutValue = parseFloat(sessionStorage.getItem('checkout_value'))
-        if (!sessionStorage.getItem('purchased')) {
-            gtag('event', 'purchase', {
-                currency: "USD",
-                value: checkoutValue || 0.00,
-                items: items
             });
-            sessionStorage.setItem('purchased', true);
         }
-    }
 
+
+
+    }, 2000);
 })
 
 
@@ -429,9 +406,20 @@ const domObserver = new MutationObserver(() => {
         })
     }
 
-    // if (checkoutConfirmation && window.location.href.includes('checkoutpage/confirmation')) {
-
-    // }
+    if (checkoutConfirmation && window.location.href.includes('checkoutpage/confirmation')) {
+        let items = JSON.parse(sessionStorage.getItem('checkout_items'))
+        let cartValue = parseFloat(sessionStorage.getItem('checkout_value'))
+        if (!sessionStorage.getItem('purchased')) {
+            gtag("event", "purchase", {
+                // using date.now for transaction id since we dont have access to the order number after purchase in the ui
+                transaction_id: `T_${Date.now()}`,
+                value: cartValue,
+                currency: "USD",
+                items: items
+            });
+            sessionStorage.setItem('purchased', true);
+        }
+    }
 
     // saved cart add to cart events
     if ($("h1.page-title").text().toLowerCase() === 'my saved cart') {
