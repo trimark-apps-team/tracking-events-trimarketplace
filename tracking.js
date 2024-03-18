@@ -3,9 +3,6 @@ window.addEventListener("load", (event) => {
     setTimeout(() => {
 
         if (!window.location.href.includes('checkout')) {
-            sessionStorage.removeItem('checkout_items')
-            sessionStorage.removeItem('checkout_value')
-            sessionStorage.removeItem('checkout_tax')
             sessionStorage.removeItem('purchased')
         }
         const productDetail = $(".product-detail")
@@ -289,17 +286,12 @@ window.addEventListener("load", (event) => {
                             items: ecommItems
                         });
 
-                        sessionStorage.setItem('checkout_items', JSON.stringify(ecommItems))
-                        sessionStorage.setItem('checkout_value', totalCartPrice)
-
                     }
 
                 })
 
             });
         }
-
-
 
     }, 2000);
 })
@@ -407,17 +399,33 @@ const domObserver = new MutationObserver(() => {
     }
 
     if (checkoutConfirmation && window.location.href.includes('checkoutpage/confirmation')) {
-        let items = JSON.parse(sessionStorage.getItem('checkout_items'))
-        let cartValue = parseFloat(sessionStorage.getItem('checkout_value'))
         if (!sessionStorage.getItem('purchased')) {
-            gtag("event", "purchase", {
-                // using date.now for transaction id since we dont have access to the order number after purchase in the ui
-                transaction_id: `T_${Date.now()}`,
-                value: cartValue,
-                currency: "USD",
-                items: items
+            $.getJSON('/delegate/ecom-api/orders/current', (data) => {
+                let orderLines = data.orderLines
+                let grandTotal = data.grandTotal // includes taxes
+                let ecommItems = []
+                orderLines.forEach((orderLine, index) => {
+                    let item = {
+                        item_id: orderLine.item.itemNumber,
+                        item_name: orderLine.item.name,
+                        price: orderLine.lineAmounts.net,
+                        quantity: orderLine.quantity
+                    }
+                    ecommItems.push(item)
+                    if (orderLines.length - 1 === index) {
+                        gtag('event', 'purchase', {
+                            currency: "USD",
+                            value: grandTotal || 0.00,
+                            items: ecommItems
+                        });
+                        sessionStorage.setItem('purchased', true);
+                    }
+
+                })
+
             });
-            sessionStorage.setItem('purchased', true);
+
+
         }
     }
 
