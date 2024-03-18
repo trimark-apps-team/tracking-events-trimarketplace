@@ -3,6 +3,8 @@ window.addEventListener("load", (event) => {
     setTimeout(() => {
 
         if (!window.location.href.includes('checkout')) {
+            sessionStorage.removeItem('checkout_items')
+            sessionStorage.removeItem('checkout_value')
             sessionStorage.removeItem('purchased')
         }
         const productDetail = $(".product-detail")
@@ -263,37 +265,81 @@ window.addEventListener("load", (event) => {
 
         }
 
-
-        // begin checkout event
-        const shippingStepLink = document.querySelector(".shipping-step a")
-        if (shippingStepLink && shippingStepLink.classList.contains('active')) {
-            $.getJSON('/delegate/ecom-api/orders/current', (data) => {
-                let orderLines = data.orderLines
-                let totalCartPrice = data.totalPrice
-                let ecommItems = []
-                orderLines.forEach((orderLine, index) => {
-                    let item = {
-                        item_id: orderLine.item.itemNumber,
-                        item_name: orderLine.item.name,
-                        price: orderLine.lineAmounts.net,
-                        quantity: orderLine.quantity
-                    }
-                    ecommItems.push(item)
-                    if (orderLines.length - 1 === index) {
-                        gtag('event', 'begin_checkout', {
-                            currency: "USD",
-                            value: totalCartPrice || 0.00,
-                            items: ecommItems
-                        });
-
-                    }
-
-                })
-
-            });
-        }
-
     }, 2000);
+})
+
+
+
+// checkout events use hashchange to run events
+
+$(window).hashchange(function () {
+    // begin checkout
+    if (window.location.hash.includes('#checkoutpage/deliverymethod')) {
+        $.getJSON('/delegate/ecom-api/orders/current', (data) => {
+            let orderLines = data.orderLines
+            let totalCartPrice = data.totalPrice
+            let ecommItems = []
+            orderLines.forEach((orderLine, index) => {
+                let item = {
+                    item_id: orderLine.item.itemNumber,
+                    item_name: orderLine.item.name,
+                    price: orderLine.lineAmounts.net,
+                    quantity: orderLine.quantity
+                }
+                ecommItems.push(item)
+                if (orderLines.length - 1 === index) {
+                    gtag('event', 'begin_checkout', {
+                        currency: "USD",
+                        value: totalCartPrice || 0.00,
+                        items: ecommItems
+                    });
+
+                    sessionStorage.setItem('checkout_items', JSON.stringify(ecommItems))
+                    sessionStorage.setItem('checkout_value', totalCartPrice)
+
+                }
+
+            })
+
+        });
+    }
+
+    // set the grandtotal amount to checkout_value session storage on review step
+    if (window.location.hash.includes('#checkoutpage/review')) {
+        $.getJSON('/delegate/ecom-api/orders/current', (data) => {
+            let grandTotal = data.grandTotal
+            sessionStorage.setItem('checkout_value', grandTotal)
+        })
+    }
+
+    if (window.location.hash.includes('#checkoutpage/confirmation')) {
+        let items = JSON.parse(sessionStorage.getItem('checkout_items'))
+        let checkoutValue = parseFloat(sessionStorage.getItem('checkout_value'))
+        if (!sessionStorage.getItem('purchased')) {
+            let ecommItems = []
+            items.forEach((orderLine, index) => {
+                let item = {
+                    item_id: orderLine.item.itemNumber,
+                    item_name: orderLine.item.name,
+                    price: orderLine.lineAmounts.net,
+                    quantity: orderLine.quantity
+                }
+                ecommItems.push(item)
+                if (orderLines.length - 1 === index) {
+                    gtag('event', 'purchase', {
+                        currency: "USD",
+                        value: checkoutValue || 0.00,
+                        items: ecommItems
+                    });
+                    sessionStorage.setItem('purchased', true);
+
+                }
+
+            })
+
+        }
+    }
+
 })
 
 
@@ -398,36 +444,9 @@ const domObserver = new MutationObserver(() => {
         })
     }
 
-    if (checkoutConfirmation && window.location.href.includes('checkoutpage/confirmation')) {
-        if (!sessionStorage.getItem('purchased')) {
-            $.getJSON('/delegate/ecom-api/orders/current', (data) => {
-                let orderLines = data.orderLines
-                let grandTotal = data.grandTotal // includes taxes
-                let ecommItems = []
-                orderLines.forEach((orderLine, index) => {
-                    let item = {
-                        item_id: orderLine.item.itemNumber,
-                        item_name: orderLine.item.name,
-                        price: orderLine.lineAmounts.net,
-                        quantity: orderLine.quantity
-                    }
-                    ecommItems.push(item)
-                    if (orderLines.length - 1 === index) {
-                        gtag('event', 'purchase', {
-                            currency: "USD",
-                            value: grandTotal || 0.00,
-                            items: ecommItems
-                        });
-                        sessionStorage.setItem('purchased', true);
-                    }
+    // if (checkoutConfirmation && window.location.href.includes('checkoutpage/confirmation')) {
 
-                })
-
-            });
-
-
-        }
-    }
+    // }
 
     // saved cart add to cart events
     if ($("h1.page-title").text().toLowerCase() === 'my saved cart') {
