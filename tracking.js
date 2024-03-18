@@ -5,8 +5,8 @@ window.addEventListener("load", (event) => {
         if (!window.location.href.includes('checkout')) {
             sessionStorage.removeItem('checkout_items')
             sessionStorage.removeItem('checkout_value')
-            sessionStorage.removeItem('checkout_tax')
             sessionStorage.removeItem('purchased')
+            sessionStorage.removeItem('began_checkout')
         }
         const productDetail = $(".product-detail")
 
@@ -302,8 +302,8 @@ const domObserver = new MutationObserver(() => {
     const shoppingCarRemovalModalButton = $(".shopping-cart-item-removal-modal button")
     const productCard = $('.product-list-container .product-card')
     const checkoutConfirmation = $('.checkout-container .confirmation-container')
-    const reviewOrder = $('.checkout-container .step-review')
-    const shippingStep = $('.checkout-container .step-shipping')
+    const reviewOrder = $('.checkout-container .review-container')
+    const shippingStep = $('.checkout-container .checkout-container')
     if (deleteItem) {
         for (var i = 0; i < deleteItem.length; i++) {
             let item = $(deleteItem[i]).parents('.item')
@@ -396,6 +396,7 @@ const domObserver = new MutationObserver(() => {
 
                     sessionStorage.setItem('checkout_items', JSON.stringify(ecommItems))
                     sessionStorage.setItem('checkout_value', totalCartPrice)
+                    sessionStorage.setItem('began_checkout', true)
 
                 }
 
