@@ -316,27 +316,12 @@ $(window).hashchange(function () {
         let items = JSON.parse(sessionStorage.getItem('checkout_items'))
         let checkoutValue = parseFloat(sessionStorage.getItem('checkout_value'))
         if (!sessionStorage.getItem('purchased')) {
-            let ecommItems = []
-            items.forEach((orderLine, index) => {
-                let item = {
-                    item_id: orderLine.item.itemNumber,
-                    item_name: orderLine.item.name,
-                    price: orderLine.lineAmounts.net,
-                    quantity: orderLine.quantity
-                }
-                ecommItems.push(item)
-                if (orderLines.length - 1 === index) {
-                    gtag('event', 'purchase', {
-                        currency: "USD",
-                        value: checkoutValue || 0.00,
-                        items: ecommItems
-                    });
-                    sessionStorage.setItem('purchased', true);
-
-                }
-
-            })
-
+            gtag('event', 'purchase', {
+                currency: "USD",
+                value: checkoutValue || 0.00,
+                items: items
+            });
+            sessionStorage.setItem('purchased', true);
         }
     }
 
