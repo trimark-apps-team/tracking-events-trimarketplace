@@ -90,7 +90,7 @@ window.addEventListener("load", (event) => {
         }
 
         // successful login check for .user-info-logged-in class on the my account page and set cookie to only fire once per session
-        var loggedInClass = document.querySelector('.user-info-logged-in')
+        var loggedInClass = $('.user-info-logged-in')
         var loggedIn = getCookie("logged_in");
         if (loggedInClass && !loggedIn) {
             gtag('event', 'login', {
@@ -173,6 +173,7 @@ const domObserver = new MutationObserver(() => {
     const productCard = $('.product-list-container .product-card')
     const checkoutConfirmation = $('.checkout-container .confirmation-container')
     const shippingStep = $('.checkout-container .checkout-container')
+    const productDetail = $(".product-detail")
     if (deleteItem) {
         for (var i = 0; i < deleteItem.length; i++) {
             let item = $(deleteItem[i]).parents('.item')
@@ -265,6 +266,8 @@ const domObserver = new MutationObserver(() => {
                             items: ecommItems
                         });
                         sessionStorage.setItem('cart_viewed', true);
+                        return;
+
                     }
 
 
