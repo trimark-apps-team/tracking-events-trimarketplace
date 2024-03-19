@@ -201,13 +201,13 @@ const domObserver = new MutationObserver(() => {
 
     // full cart page remove from cart event
     if (shoppingCartRemovalModalButton) {
-        let modalContent = $(shoppingCarRemovalModalButton).parents('.modal-body')
+        let modalContent = $(shoppingCartRemovalModalButton).parents('.modal-body')
         let itemName = $(modalContent).find('.product-name').text()
         let itemID = $(modalContent).find('.number').text().replace(/[^.0-9]/g, '')
         let htmlItemIDString = `.item-${itemID}`
         let itemPrice = parseFloat($(htmlItemIDString).find('.price-small').text().replace(/[^.0-9]/g, ''))
         let itemQuantity = Number($(htmlItemIDString).find('.quantity input').val())
-        $(shoppingCarRemovalModalButton).unbind().click(function () {
+        $(shoppingCartRemovalModalButton).unbind().click(function () {
             gtag('event', 'remove_from_cart', {
                 currency: "USD",
                 value: itemPrice || 0.00,
