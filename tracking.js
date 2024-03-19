@@ -1,133 +1,138 @@
 window.addEventListener("load", (event) => {
-    if (!window.location.href.includes('checkout')) {
-        sessionStorage.removeItem('checkout_items')
-        sessionStorage.removeItem('checkout_value')
-        sessionStorage.removeItem('purchased')
-        sessionStorage.removeItem('began_checkout')
-        sessionStorage.removeItem('cart_viewed')
-    }
-    const productDetail = $(".product-detail")
+    // since we don't control how or when elements on the page render, wrap all events except mutation observers in a 5 second timeout for consistency
+    setTimeout(() => {
+        if (!window.location.href.includes('checkout')) {
+            sessionStorage.removeItem('checkout_items')
+            sessionStorage.removeItem('checkout_value')
+            sessionStorage.removeItem('purchased')
+            sessionStorage.removeItem('began_checkout')
+            sessionStorage.removeItem('cart_viewed')
+        }
+        const productDetail = $(".product-detail")
 
-    // session start event
-    var sessionStarted = getCookie("session_started");
-    if (!sessionStarted) {
-        gtag('event', 'session_start', {
-            'event_category': 'user session',
+        // session start event
+        var sessionStarted = getCookie("session_started");
+        if (!sessionStarted) {
+            gtag('event', 'session_start', {
+                'event_category': 'user session',
 
-        });
+            });
 
-        setCookie('session_started', true);
-    }
+            setCookie('session_started', true);
+        }
 
 
-    // search event
-    $(".search-input .header-search a").unbind().click(function () {
-        let inputVal = $("#header-search").val();
-        gtag('event', 'search', {
-            'event_category': 'site search',
-            'event_label': inputVal || ''
+        // search event
+        $(".search-input .header-search a").unbind().click(function () {
+            let inputVal = $("#header-search").val();
+            gtag('event', 'search', {
+                'event_category': 'site search',
+                'event_label': inputVal || ''
 
-        });
-    })
-
-    // search results list event
-    if (window.location.href.includes('ecom-search')) {
-        let searchResultsTitle = $(".parent-category-title .name").text() || ''
-        let items = []
-        $('.product-card').each(function (index) {
-            let item = {
-                item_id: $(this).attr('id') || '',
-                item_name: $(this).find(".product-description").text() || '',
-                price: parseFloat($(this).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
-                quantity: Number($(this).find(".controls .quantity .input-text").val()) || 1
-            }
-            items.push(item)
-            if ($('.product-card').length - 1 === index) {
-                gtag("event", "view_item_list", {
-                    item_list_name: searchResultsTitle,
-                    items: items
-                });
-                gtag('event', 'view_search_results', {
-                    'event_category': 'site_search_results',
-                    'event_label': searchResultsTitle
-
-                })
-            }
+            });
         })
-    }
 
-    // my catalog results list
-    if (window.location.href.includes('mycatalog') && !window.location.href.includes('ecom-search')) {
-        let searchResultsTitle = $(".product-list-header .category-name h1").text() || ''
-        let items = []
-        $('.product-card').each(function (index) {
-            let item = {
-                item_id: $(this).attr('id') || '',
-                item_name: $(this).find(".product-description").text() || '',
-                price: parseFloat($(this).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
-                quantity: Number($(this).find(".controls .quantity .input-text").val()) || 1
-            }
-            items.push(item)
-            if ($('.product-card').length - 1 === index) {
-                gtag("event", "view_item_list", {
-                    item_list_name: searchResultsTitle,
-                    items: items
-                });
-            }
-        })
-    }
+        // search results list event
+        if (window.location.href.includes('ecom-search')) {
+            let searchResultsTitle = $(".parent-category-title .name").text() || ''
+            let items = []
+            $('.product-card').each(function (index) {
+                let item = {
+                    item_id: $(this).attr('id') || '',
+                    item_name: $(this).find(".product-description").text() || '',
+                    price: parseFloat($(this).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
+                    quantity: Number($(this).find(".controls .quantity .input-text").val()) || 1
+                }
+                items.push(item)
+                if ($('.product-card').length - 1 === index) {
+                    gtag("event", "view_item_list", {
+                        item_list_name: searchResultsTitle,
+                        items: items
+                    });
+                    gtag('event', 'view_search_results', {
+                        'event_category': 'site_search_results',
+                        'event_label': searchResultsTitle
 
-    // first visit event. Fires only if user does not have site_visitor in localstorage
-    var siteVisitor = localStorage.getItem('site_visitor')
-    if (!siteVisitor) {
-        gtag('event', 'first_visit', {
-            'event_category': 'new user',
-        });
-        localStorage.setItem("site_visitor", true);
-    }
+                    })
+                }
+            })
+        }
 
-    // successful login check for .user-info-logged-in class on the my account page and set cookie to only fire once per session
-    var loggedInClass = $('.user-info-logged-in')
-    var loggedIn = getCookie("logged_in");
-    if (loggedInClass && !loggedIn) {
-        gtag('event', 'login', {
-            'event_category': 'form submission',
-            'event_label': 'login form submit'
-        });
-        setCookie('logged_in')
+        // my catalog results list
+        if (window.location.href.includes('mycatalog') && !window.location.href.includes('ecom-search')) {
+            let searchResultsTitle = $(".product-list-header .category-name h1").text() || ''
+            let items = []
+            $('.product-card').each(function (index) {
+                let item = {
+                    item_id: $(this).attr('id') || '',
+                    item_name: $(this).find(".product-description").text() || '',
+                    price: parseFloat($(this).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
+                    quantity: Number($(this).find(".controls .quantity .input-text").val()) || 1
+                }
+                items.push(item)
+                if ($('.product-card').length - 1 === index) {
+                    gtag("event", "view_item_list", {
+                        item_list_name: searchResultsTitle,
+                        items: items
+                    });
+                }
+            })
+        }
 
-    }
+        // first visit event. Fires only if user does not have site_visitor in localstorage
+        var siteVisitor = localStorage.getItem('site_visitor')
+        if (!siteVisitor) {
+            gtag('event', 'first_visit', {
+                'event_category': 'new user',
+            });
+            localStorage.setItem("site_visitor", true);
+        }
 
-    // view item on pdp page
-    if (productDetail && window.location.href.indexOf("product-details") > -1) {
-        gtag('event', 'view_item', {
-            currency: "USD",
-            value: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
-            items: [
-                {
-                    item_id: $(productDetail).find('.item-number-top span').text() || '',
-                    item_name: $(productDetail).find(".product-description").text() || '',
-                    price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
-                    quantity: 1
-                },
-            ]
-        });
+        // successful login check for .user-info-logged-in class on the my account page and set cookie to only fire once per session
+        var loggedInClass = $('.user-info-logged-in')
+        var loggedIn = getCookie("logged_in");
+        if (loggedInClass && !loggedIn) {
+            gtag('event', 'login', {
+                'event_category': 'form submission',
+                'event_label': 'login form submit'
+            });
+            setCookie('logged_in')
 
-        gtag('event', 'select_item', {
-            currency: "USD",
-            value: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
-            items: [
-                {
-                    item_id: $(productDetail).find('.item-number-top span').text() || '',
-                    item_name: $(productDetail).find(".product-description").text() || '',
-                    price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
-                    quantity: 1
-                },
-            ]
-        });
-    }
+        }
 
-    // view cart
+        // view item on pdp page
+        if (productDetail && window.location.href.indexOf("product-details") > -1) {
+            gtag('event', 'view_item', {
+                currency: "USD",
+                value: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
+                items: [
+                    {
+                        item_id: $(productDetail).find('.item-number-top span').text() || '',
+                        item_name: $(productDetail).find(".product-description").text() || '',
+                        price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
+                        quantity: 1
+                    },
+                ]
+            });
+
+            gtag('event', 'select_item', {
+                currency: "USD",
+                value: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
+                items: [
+                    {
+                        item_id: $(productDetail).find('.item-number-top span').text() || '',
+                        item_name: $(productDetail).find(".product-description").text() || '',
+                        price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
+                        quantity: 1
+                    },
+                ]
+            });
+        }
+
+    }, 1000);
+
+
+    // view cart does not need to be in a set timeout
     if (window.location.href.indexOf("shopping-cart") > -1) {
         if (!sessionStorage.getItem('cart_viewed')) {
             $.getJSON('/delegate/ecom-api/orders/current', (data) => {
@@ -156,7 +161,6 @@ window.addEventListener("load", (event) => {
             sessionStorage.setItem('cart_viewed', true);
         }
     }
-
 })
 
 
@@ -447,11 +451,6 @@ const domObserver = new MutationObserver(() => {
             })
         })
     }
-
-
-
-
-
 });
 
 domObserver.observe(document.body, { childList: true, subtree: true });
