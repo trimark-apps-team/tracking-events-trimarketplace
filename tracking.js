@@ -169,11 +169,12 @@ function getCookie(cname) {
 // remove from cart in mini cart widget
 const domObserver = new MutationObserver(() => {
     const deleteItem = $('.mini-cart-contents .delete-orderline');
-    const shoppingCarRemovalModalButton = $(".shopping-cart-item-removal-modal button")
+    const shoppingCartRemovalModalButton = $(".shopping-cart-item-removal-modal button")
     const productCard = $('.product-list-container .product-card')
     const checkoutConfirmation = $('.checkout-container .confirmation-container')
     const shippingStep = $('.checkout-container .checkout-container')
     const productDetail = $(".product-detail")
+    const shoppingCartContainer = $('.shopping-cart-container')
     if (deleteItem) {
         for (var i = 0; i < deleteItem.length; i++) {
             let item = $(deleteItem[i]).parents('.item')
@@ -199,7 +200,7 @@ const domObserver = new MutationObserver(() => {
     }
 
     // full cart page remove from cart event
-    if (shoppingCarRemovalModalButton) {
+    if (shoppingCartRemovalModalButton) {
         let modalContent = $(shoppingCarRemovalModalButton).parents('.modal-body')
         let itemName = $(modalContent).find('.product-name').text()
         let itemID = $(modalContent).find('.number').text().replace(/[^.0-9]/g, '')
@@ -244,7 +245,7 @@ const domObserver = new MutationObserver(() => {
     }
 
     // view cart
-    if (window.location.href.indexOf("shopping-cart") > -1) {
+    if (shoppingCartContainer && window.location.href.indexOf("shopping-cart") > -1) {
         $.getJSON('/delegate/ecom-api/orders/current', (data) => {
             let orderLines = data.orderLines
             let totalCartPrice = data.totalPrice
@@ -269,15 +270,9 @@ const domObserver = new MutationObserver(() => {
                         return;
 
                     }
-
-
-
                 }
-
             })
-
         });
-
     }
 
 
@@ -333,60 +328,7 @@ const domObserver = new MutationObserver(() => {
         }
     }
 
-    // saved cart add to cart events
-    if ($("h1.page-title").text().toLowerCase() === 'my saved cart') {
 
-        console.log('on saved cart page')
-
-        //cart icon add to cart button
-        $(".cart-with-icon.orderline-add-cart-btn").unbind().click(function () {
-            console.log('saved to cart cart icon button clicked')
-            let item = $(this).parents('.item')
-            let itemValue = parseFloat(item.find(".qty-total-container .total-amount").text().replace(/[^.0-9]/g, '')) || 0.00
-            let itemQuantity = Number(item.find(".quantity input").val()) || 1
-            let itemPrice = parseFloat(item.find(".product-info .pricing .price").text().replace(/[^.0-9]/g, '')) || 0.00
-            let itemId = item.find(".product-info .item-num .value").text().replace(/[^.0-9]/g, '') || ''
-            let itemName = item.find(".product-info .product-name").text() || ''
-            gtag('event', "add_to_cart", {
-                currency: "USD",
-                value: itemValue,
-                items: [
-                    {
-                        item_id: itemId,
-                        item_name: itemName,
-                        price: itemPrice,
-                        quantity: itemQuantity
-                    },
-                ]
-            })
-        })
-
-        // add to cart button order summary (adds everything in saved cart list)
-        $(".reorder-modal .btn-wrapper button.add-to-cart").unbind().click(function () {
-            let products = $(".orderlines .orderline .item")
-            items = []
-            products.each(function (index) {
-                let itemQuantity = Number($(this).find(".quantity input").val()) || 1
-                let itemPrice = parseFloat($(this).find(".product-info .pricing .price").text().replace(/[^.0-9]/g, '')) || 0.00
-                let itemId = $(this).find(".product-info .item-num .value").text().replace(/[^.0-9]/g, '') || ''
-                let itemName = $(this).find(".product-info .product-name").text() || ''
-                items.push({
-                    item_id: itemId,
-                    item_name: itemName,
-                    price: itemPrice,
-                    quantity: itemQuantity
-                })
-
-                if (products.length - 1 === index) {
-                    gtag('event', 'add_to_cart', {
-                        currency: "USD",
-                        value: parseFloat($(".order-summary-component .prices .amount").text().replace(/[^.0-9]/g, '')) || 0.00,
-                        items: items
-                    });
-                }
-            })
-        })
-    }
 
     // wishlist page add to cart modal (adds all products in wishlist to cart)
     if (window.location.href.includes('favorite-details') && $(".order-summary-component header h3").text().toLowerCase() == 'wishlist summary') {
