@@ -7,6 +7,7 @@ window.addEventListener("load", (event) => {
             sessionStorage.removeItem('checkout_value')
             sessionStorage.removeItem('purchased')
             sessionStorage.removeItem('began_checkout')
+            sessionStorage.removeItem('cart_viewed')
         }
         const productDetail = $(".product-detail")
 
@@ -100,107 +101,7 @@ window.addEventListener("load", (event) => {
 
         }
 
-        // add-to-cart pdp page
-        $(".product-detail button").click(function () {
-            gtag('event', 'add_to_cart', {
-                currency: "USD",
-                value: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
-                items: [
-                    {
-                        item_id: $(productDetail).find('.item-number-top span').text() || '',
-                        item_name: $(productDetail).find(".product-description").text() || '',
-                        price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
-                        quantity: Number($(productDetail).find(".order-actions .input-text").val()) || 1
-                    },
-                ]
-            });
-        })
 
-
-
-
-        // quick order add to cart on cart page
-        let quickOrderaddToCartButton = $('.quick-order-entry-container #by-item-number .add-to-cart button')
-        quickOrderaddToCartButton.click(function () {
-            const quickOrderItem = $(".quick-order-entry-container .quick-order-item-list .item-list .field .item-details-preview")
-            const quickOrderInformation = $(".quick-order-entry-container .quick-order-item-list .item-list .field .item-details-preview .item-preview .information")
-            let items = [];
-            console.log(quickOrderItem)
-            $(quickOrderInformation).each(function (index) {
-                let itemField = $(this).parents(".field")
-                let itemName = $(this).find('h4').text().replace(/[\t\n\r]/gm, '') || ''
-                let itemID = $(this).find('.item-number span').eq(1).text() || ''
-                let itemQuantity = Number($(itemField).find('.quantity input').val()) || 1
-                let item = {
-                    item_id: itemID,
-                    item_name: itemName,
-                    quantity: itemQuantity,
-                }
-                items.push(item)
-                if (quickOrderInformation.length - 1 === index) {
-                    gtag('event', 'add_to_cart', {
-                        currency: "USD",
-                        value: parseFloat($(".order-summary-component .prices .amount").text().replace(/[^.0-9]/g, '')) || 0.00,
-                        items: items
-                    });
-                }
-            })
-        })
-
-        // saved cart add to cart events
-        if ($("h1.page-title").text().toLowerCase() === 'my saved cart') {
-
-            console.log('on saved cart page')
-
-            //cart icon add to cart button
-            $(".cart-with-icon.orderline-add-cart-btn").unbind().click(function () {
-                console.log('saved to cart cart icon button clicked')
-                let item = $(this).parents('.item')
-                let itemValue = parseFloat(item.find(".qty-total-container .total-amount").text().replace(/[^.0-9]/g, '')) || 0.00
-                let itemQuantity = Number(item.find(".quantity input").val()) || 1
-                let itemPrice = parseFloat(item.find(".product-info .pricing .price").text().replace(/[^.0-9]/g, '')) || 0.00
-                let itemId = item.find(".product-info .item-num .value").text().replace(/[^.0-9]/g, '') || ''
-                let itemName = item.find(".product-info .product-name").text() || ''
-                gtag('event', "add_to_cart", {
-                    currency: "USD",
-                    value: itemValue,
-                    items: [
-                        {
-                            item_id: itemId,
-                            item_name: itemName,
-                            price: itemPrice,
-                            quantity: itemQuantity
-                        },
-                    ]
-                })
-            })
-
-            // add to cart button order summary (adds everything in saved cart list)
-            $(".reorder-modal .btn-wrapper button.add-to-cart").unbind().click(function () {
-                let products = $(".orderlines .orderline .item")
-                items = []
-                products.each(function (index) {
-                    let itemQuantity = Number($(this).find(".quantity input").val()) || 1
-                    let itemPrice = parseFloat($(this).find(".product-info .pricing .price").text().replace(/[^.0-9]/g, '')) || 0.00
-                    let itemId = $(this).find(".product-info .item-num .value").text().replace(/[^.0-9]/g, '') || ''
-                    let itemName = $(this).find(".product-info .product-name").text() || ''
-                    items.push({
-                        item_id: itemId,
-                        item_name: itemName,
-                        price: itemPrice,
-                        quantity: itemQuantity
-                    })
-
-                    if (products.length - 1 === index) {
-                        gtag('event', 'add_to_cart', {
-                            currency: "USD",
-                            value: parseFloat($(".order-summary-component .prices .amount").text().replace(/[^.0-9]/g, '')) || 0.00,
-                            items: items
-                        });
-                    }
-                })
-            })
-        }
 
 
 
@@ -235,73 +136,7 @@ window.addEventListener("load", (event) => {
             });
         }
 
-
-
-        // view cart
-        if (window.location.href.indexOf("shopping-cart") > -1) {
-            $.getJSON('/delegate/ecom-api/orders/current', (data) => {
-                let orderLines = data.orderLines
-                let totalCartPrice = data.totalPrice
-                let ecommItems = []
-                orderLines.forEach((orderLine, index) => {
-                    let item = {
-                        item_id: orderLine.item.itemNumber,
-                        item_name: orderLine.item.name,
-                        price: orderLine.lineAmounts.net,
-                        quantity: orderLine.quantity
-                    }
-                    ecommItems.push(item)
-                    if (orderLines.length - 1 === index) {
-                        gtag('event', 'view_cart', {
-                            currency: "USD",
-                            value: totalCartPrice || 0.00,
-                            items: ecommItems
-                        });
-
-                    }
-
-                })
-
-            });
-
-        }
-
-
-        // begin checkout event
-        const shippingStep = $('.checkout-container .checkout-container')
-        if (shippingStep && window.location.href.includes('checkoutpage/deliverymethod')) {
-            $.getJSON('/delegate/ecom-api/orders/current', (data) => {
-                let orderLines = data.orderLines
-                let totalCartPrice = data.totalPrice
-                let ecommItems = []
-                orderLines.forEach((orderLine, index) => {
-                    let item = {
-                        item_id: orderLine.item.itemNumber,
-                        item_name: orderLine.item.name,
-                        price: orderLine.lineAmounts.net,
-                        quantity: orderLine.quantity
-                    }
-                    ecommItems.push(item)
-                    if (orderLines.length - 1 === index) {
-                        if (!sessionStorage.getItem('began_checkout')) {
-                            gtag('event', 'begin_checkout', {
-                                currency: "USD",
-                                value: totalCartPrice || 0.00,
-                                items: ecommItems
-                            });
-
-                            sessionStorage.setItem('checkout_items', JSON.stringify(ecommItems))
-                            sessionStorage.setItem('checkout_value', totalCartPrice)
-                            sessionStorage.setItem('began_checkout', true)
-                        }
-                    }
-
-                })
-
-            });
-        }
-
-    }, 2000);
+    }, 1000);
 })
 
 
@@ -337,6 +172,7 @@ const domObserver = new MutationObserver(() => {
     const shoppingCarRemovalModalButton = $(".shopping-cart-item-removal-modal button")
     const productCard = $('.product-list-container .product-card')
     const checkoutConfirmation = $('.checkout-container .confirmation-container')
+    const shippingStep = $('.checkout-container .checkout-container')
     if (deleteItem) {
         for (var i = 0; i < deleteItem.length; i++) {
             let item = $(deleteItem[i]).parents('.item')
@@ -404,6 +240,75 @@ const domObserver = new MutationObserver(() => {
             });
 
         })
+    }
+
+    // view cart
+    if (window.location.href.indexOf("shopping-cart") > -1) {
+        $.getJSON('/delegate/ecom-api/orders/current', (data) => {
+            let orderLines = data.orderLines
+            let totalCartPrice = data.totalPrice
+            let ecommItems = []
+            orderLines.forEach((orderLine, index) => {
+                let item = {
+                    item_id: orderLine.item.itemNumber,
+                    item_name: orderLine.item.name,
+                    price: orderLine.lineAmounts.net,
+                    quantity: orderLine.quantity
+                }
+                ecommItems.push(item)
+                if (orderLines.length - 1 === index) {
+
+                    if (!sessionStorage.getItem('cart_viewed')) {
+                        gtag('event', 'view_cart', {
+                            currency: "USD",
+                            value: totalCartPrice || 0.00,
+                            items: ecommItems
+                        });
+                        sessionStorage.setItem('cart_viewed', true);
+                    }
+
+
+
+                }
+
+            })
+
+        });
+
+    }
+
+
+    // begin checkout event
+    if (shippingStep && window.location.href.includes('checkoutpage/deliverymethod')) {
+        $.getJSON('/delegate/ecom-api/orders/current', (data) => {
+            let orderLines = data.orderLines
+            let totalCartPrice = data.totalPrice
+            let ecommItems = []
+            orderLines.forEach((orderLine, index) => {
+                let item = {
+                    item_id: orderLine.item.itemNumber,
+                    item_name: orderLine.item.name,
+                    price: orderLine.lineAmounts.net,
+                    quantity: orderLine.quantity
+                }
+                ecommItems.push(item)
+                if (orderLines.length - 1 === index) {
+                    if (!sessionStorage.getItem('began_checkout')) {
+                        gtag('event', 'begin_checkout', {
+                            currency: "USD",
+                            value: totalCartPrice || 0.00,
+                            items: ecommItems
+                        });
+
+                        sessionStorage.setItem('checkout_items', JSON.stringify(ecommItems))
+                        sessionStorage.setItem('checkout_value', totalCartPrice)
+                        sessionStorage.setItem('began_checkout', true)
+                    }
+                }
+
+            })
+
+        });
     }
 
 
@@ -507,6 +412,110 @@ const domObserver = new MutationObserver(() => {
             })
         })
     }
+
+    // add-to-cart pdp page
+    $(".product-detail button").unbind().click(function () {
+        gtag('event', 'add_to_cart', {
+            currency: "USD",
+            value: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
+            items: [
+                {
+                    item_id: $(productDetail).find('.item-number-top span').text() || '',
+                    item_name: $(productDetail).find(".product-description").text() || '',
+                    price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
+                    quantity: Number($(productDetail).find(".order-actions .input-text").val()) || 1
+                },
+            ]
+        });
+    })
+
+
+
+
+    // quick order add to cart on cart page
+    let quickOrderaddToCartButton = $('.quick-order-entry-container #by-item-number .add-to-cart button')
+    quickOrderaddToCartButton.unbind().click(function () {
+        const quickOrderItem = $(".quick-order-entry-container .quick-order-item-list .item-list .field .item-details-preview")
+        const quickOrderInformation = $(".quick-order-entry-container .quick-order-item-list .item-list .field .item-details-preview .item-preview .information")
+        let items = [];
+        console.log(quickOrderItem)
+        $(quickOrderInformation).each(function (index) {
+            let itemField = $(this).parents(".field")
+            let itemName = $(this).find('h4').text().replace(/[\t\n\r]/gm, '') || ''
+            let itemID = $(this).find('.item-number span').eq(1).text() || ''
+            let itemQuantity = Number($(itemField).find('.quantity input').val()) || 1
+            let item = {
+                item_id: itemID,
+                item_name: itemName,
+                quantity: itemQuantity,
+            }
+            items.push(item)
+            if (quickOrderInformation.length - 1 === index) {
+                gtag('event', 'add_to_cart', {
+                    currency: "USD",
+                    value: parseFloat($(".order-summary-component .prices .amount").text().replace(/[^.0-9]/g, '')) || 0.00,
+                    items: items
+                });
+            }
+        })
+    })
+
+    // saved cart add to cart events
+    if ($("h1.page-title").text().toLowerCase() === 'my saved cart') {
+
+        console.log('on saved cart page')
+
+        //cart icon add to cart button
+        $(".cart-with-icon.orderline-add-cart-btn").unbind().click(function () {
+            console.log('saved to cart cart icon button clicked')
+            let item = $(this).parents('.item')
+            let itemValue = parseFloat(item.find(".qty-total-container .total-amount").text().replace(/[^.0-9]/g, '')) || 0.00
+            let itemQuantity = Number(item.find(".quantity input").val()) || 1
+            let itemPrice = parseFloat(item.find(".product-info .pricing .price").text().replace(/[^.0-9]/g, '')) || 0.00
+            let itemId = item.find(".product-info .item-num .value").text().replace(/[^.0-9]/g, '') || ''
+            let itemName = item.find(".product-info .product-name").text() || ''
+            gtag('event', "add_to_cart", {
+                currency: "USD",
+                value: itemValue,
+                items: [
+                    {
+                        item_id: itemId,
+                        item_name: itemName,
+                        price: itemPrice,
+                        quantity: itemQuantity
+                    },
+                ]
+            })
+        })
+
+        // add to cart button order summary (adds everything in saved cart list)
+        $(".reorder-modal .btn-wrapper button.add-to-cart").unbind().click(function () {
+            let products = $(".orderlines .orderline .item")
+            items = []
+            products.each(function (index) {
+                let itemQuantity = Number($(this).find(".quantity input").val()) || 1
+                let itemPrice = parseFloat($(this).find(".product-info .pricing .price").text().replace(/[^.0-9]/g, '')) || 0.00
+                let itemId = $(this).find(".product-info .item-num .value").text().replace(/[^.0-9]/g, '') || ''
+                let itemName = $(this).find(".product-info .product-name").text() || ''
+                items.push({
+                    item_id: itemId,
+                    item_name: itemName,
+                    price: itemPrice,
+                    quantity: itemQuantity
+                })
+
+                if (products.length - 1 === index) {
+                    gtag('event', 'add_to_cart', {
+                        currency: "USD",
+                        value: parseFloat($(".order-summary-component .prices .amount").text().replace(/[^.0-9]/g, '')) || 0.00,
+                        items: items
+                    });
+                }
+            })
+        })
+    }
+
+
 
 
 
