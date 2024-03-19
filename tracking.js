@@ -246,33 +246,32 @@ const domObserver = new MutationObserver(() => {
 
     // view cart
     if (shoppingCartContainer && window.location.href.indexOf("shopping-cart") > -1) {
-        $.getJSON('/delegate/ecom-api/orders/current', (data) => {
-            let orderLines = data.orderLines
-            let totalCartPrice = data.totalPrice
-            let ecommItems = []
-            orderLines.forEach((orderLine, index) => {
-                let item = {
-                    item_id: orderLine.item.itemNumber,
-                    item_name: orderLine.item.name,
-                    price: orderLine.lineAmounts.net,
-                    quantity: orderLine.quantity
-                }
-                ecommItems.push(item)
-                if (orderLines.length - 1 === index) {
+        if (!sessionStorage.getItem('cart_viewed')) {
+            $.getJSON('/delegate/ecom-api/orders/current', (data) => {
+                let orderLines = data.orderLines
+                let totalCartPrice = data.totalPrice
+                let ecommItems = []
+                orderLines.forEach((orderLine, index) => {
+                    let item = {
+                        item_id: orderLine.item.itemNumber,
+                        item_name: orderLine.item.name,
+                        price: orderLine.lineAmounts.net,
+                        quantity: orderLine.quantity
+                    }
+                    ecommItems.push(item)
+                    if (orderLines.length - 1 === index) {
 
-                    if (!sessionStorage.getItem('cart_viewed')) {
                         gtag('event', 'view_cart', {
                             currency: "USD",
                             value: totalCartPrice || 0.00,
                             items: ecommItems
                         });
-                        sessionStorage.setItem('cart_viewed', true);
-                        return;
 
                     }
-                }
-            })
-        });
+                })
+            });
+            sessionStorage.setItem('cart_viewed', true);
+        }
     }
 
 
