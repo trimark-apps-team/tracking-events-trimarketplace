@@ -1,17 +1,21 @@
 window.addEventListener("load", (event) => {
 
-    // collect company name and company id when user is on my account
-    if(window.location.href.includes('my-account')) {
-      let userInfo = $(".user-info-logged-in .contact");
-      console.log(userInfo.find('h5').text() || '')
-      console.log(userInfo.find('p').text().split("Company ID ").pop())
-      
-      gtag('set', 'user_properties', {
-        company_name: userInfo.find('h5').text() || '',
-        company_id: userInfo.find('p').text().split("Company ID ").pop()
-      });
-    }
-    
+    // collect company name and company id for user
+    $.ajax({
+        type: 'GET',
+        url: "/delegate/ecom-api/users/current",
+        success: function (data, status) {
+            gtag('set', 'user_properties', {
+                company_name: data.activeUserGroup.name,
+                company_id: data.activeUserGroup.key
+            });
+
+        },
+        error: function (jqXHR, status, err) {
+            console.log("Get current user info Failed");
+        }
+    }); // end rhythm enpoint call 
+
     // since we don't control how or when elements on the page render, wrap all events except mutation observers in a 5 second timeout for consistency
     setTimeout(() => {
         if (!window.location.href.includes('checkout')) {
