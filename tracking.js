@@ -51,49 +51,55 @@ window.addEventListener("load", (event) => {
 
         // search results list event
         if (window.location.href.includes('ecom-search')) {
-            let searchResultsTitle = $(".parent-category-title .name").text() || ''
-            let items = []
-            $('.product-card').each(function (index) {
-                let item = {
-                    item_id: $(this).attr('id') || '',
-                    item_name: $(this).find(".product-description").text() || '',
-                    price: parseFloat($(this).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
-                    quantity: Number($(this).find(".controls .quantity .input-text").val()) || 1
-                }
-                items.push(item)
-                if ($('.product-card').length - 1 === index) {
-                    gtag("event", "view_item_list", {
-                        item_list_name: searchResultsTitle,
-                        items: items
-                    });
-                    gtag('event', 'view_search_results', {
-                        'event_category': 'site_search_results',
-                        'event_label': searchResultsTitle
+            window.setTimeout(() => {
+                let searchResultsTitle = $(".parent-category-title .name").text() || ''
+                let items = []
+                $('.product-card').each(function (index) {
+                    let item = {
+                        item_id: $(this).attr('id') || '',
+                        item_name: $(this).find(".product-description").text() || '',
+                        price: parseFloat($(this).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
+                        quantity: Number($(this).find(".controls .quantity .input-text").val()) || 1
+                    }
+                    items.push(item)
+                    if ($('.product-card').length - 1 === index) {
+                        gtag("event", "view_item_list", {
+                            item_list_name: searchResultsTitle,
+                            items: items
+                        });
+                        gtag('event', 'view_search_results', {
+                            'event_category': 'site_search_results',
+                            'event_label': searchResultsTitle
 
-                    })
-                }
-            })
+                        })
+                    }
+                })
+            }, 1000)
         }
 
         // my catalog results list
         if (window.location.href.includes('mycatalog') && !window.location.href.includes('ecom-search')) {
-            let searchResultsTitle = $(".product-list-header .category-name h1").text() || ''
-            let items = []
-            $('.product-card').each(function (index) {
-                let item = {
-                    item_id: $(this).attr('id') || '',
-                    item_name: $(this).find(".product-description").text() || '',
-                    price: parseFloat($(this).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
-                    quantity: Number($(this).find(".controls .quantity .input-text").val()) || 1
-                }
-                items.push(item)
-                if ($('.product-card').length - 1 === index) {
-                    gtag("event", "view_item_list", {
-                        item_list_name: searchResultsTitle,
-                        items: items
-                    });
-                }
-            })
+            // wait an extra moment
+            window.setTimeout(() => {
+                let searchResultsTitle = $(".product-list-header .category-name h1").text() || ''
+                let items = []
+                $('.product-card').each(function (index) {
+                    let item = {
+                        item_id: $(this).attr('id') || '',
+                        item_name: $(this).find(".product-description").text() || '',
+                        price: parseFloat($(this).find(".price-view .price .price-small:first-of-type").text().replace(/[^.0-9]/g, '')) || 0.00,
+                        quantity: Number($(this).find(".controls .quantity .input-text").val()) || 1
+                    }
+                    items.push(item)
+                    if ($('.product-card').length - 1 === index) {
+                        gtag("event", "view_item_list", {
+                            item_list_name: searchResultsTitle,
+                            items: items
+                        });
+                    }
+                })
+            }, 1000)
+
         }
 
         // first visit event. Fires only if user does not have site_visitor in localstorage
