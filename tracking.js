@@ -227,7 +227,7 @@ const domObserver = new MutationObserver(() => {
             $(deleteItem[i]).unbind().click(function () {
                 gtag('event', 'remove_from_cart', {
                     currency: "USD",
-                    value: itemPrice * itemQuantity || 0.00,
+                    value: itemPrice || 0.00,
                     items: [
                         {
                             item_id: itemID || '',
@@ -327,12 +327,8 @@ const domObserver = new MutationObserver(() => {
 
     //purchase
     if (checkoutConfirmation && window.location.href.includes('checkoutpage/confirmation')) {
-        console.log('ON CONFIRMATION PAGE')
         let items = JSON.parse(sessionStorage.getItem('checkout_items'))
         let grandTotal = parseFloat($(".order-summary-component .total .amount").text().replace(/[^.0-9]/g, '')) || 0.00
-        console.log(items)
-        console.log(grandTotal)
-
         if (!sessionStorage.getItem('purchased')) {
             gtag("event", "purchase", {
                 // using date.now for transaction id since we dont have access to the order number after purchase in the ui
