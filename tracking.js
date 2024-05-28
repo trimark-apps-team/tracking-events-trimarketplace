@@ -21,6 +21,7 @@ window.addEventListener("load", (event) => {
         if (!window.location.href.includes('checkout')) {
             sessionStorage.removeItem('checkout_items')
             sessionStorage.removeItem('checkout_value')
+            sessionStorage.removeItem('purchased')
             sessionStorage.removeItem('began_checkout')
             sessionStorage.removeItem('cart_viewed')
         }
@@ -327,13 +328,16 @@ const domObserver = new MutationObserver(() => {
         console.log(items)
         console.log(grandTotal)
 
-        gtag("event", "purchase", {
-            // using date.now for transaction id since we dont have access to the order number after purchase in the ui
-            transaction_id: `T_${Date.now()}`,
-            value: grandTotal,
-            currency: "USD",
-            items: items
-        });
+        if (!sessionStorage.getItem('purchased')) {
+            gtag("event", "purchase", {
+                // using date.now for transaction id since we dont have access to the order number after purchase in the ui
+                transaction_id: `T_${Date.now()}`,
+                value: grandTotal,
+                currency: "USD",
+                items: items
+            });
+            sessionStorage.setItem('purchased', true);
+        }
 
     }
 
