@@ -126,7 +126,7 @@ window.addEventListener("load", (event) => {
                         item_id: $(productDetail).find('.item-number-top span').text() || '',
                         item_name: $(productDetail).find(".product-description").text() || '',
                         price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
-                        quantity: 1
+                        quantity: Number($(productDetail).find($(".add-to-cart-quantity").val()))
                     },
                 ]
             });
@@ -139,7 +139,7 @@ window.addEventListener("load", (event) => {
                         item_id: $(productDetail).find('.item-number-top span').text() || '',
                         item_name: $(productDetail).find(".product-description").text() || '',
                         price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
-                        quantity: 1
+                        quantity: Number($(productDetail).find($(".add-to-cart-quantity").val()))
                     },
                 ]
             });
@@ -159,7 +159,7 @@ window.addEventListener("load", (event) => {
                     let item = {
                         item_id: orderLine.item.itemNumber,
                         item_name: orderLine.item.name,
-                        price: orderLine.lineAmounts.net,
+                        price: orderLine.unitPrice.net,
                         quantity: orderLine.quantity
                     }
                     ecommItems.push(item)
@@ -324,7 +324,6 @@ const domObserver = new MutationObserver(() => {
         console.log('ON CONFIRMATION PAGE')
         let items = JSON.parse(sessionStorage.getItem('checkout_items'))
         let grandTotal = parseFloat($(".order-summary-component .total .amount").text().replace(/[^.0-9]/g, '')) || 0.00
-        parseFloat(sessionStorage.getItem('checkout_value'))
         console.log(items)
         console.log(grandTotal)
 
@@ -436,7 +435,7 @@ const domObserver = new MutationObserver(() => {
                     {
                         item_id: itemId,
                         item_name: itemName,
-                        price: itemPrice,
+                        price: itemPrice / itemQuantity,
                         quantity: itemQuantity
                     },
                 ]
