@@ -21,7 +21,6 @@ window.addEventListener("load", (event) => {
         if (!window.location.href.includes('checkout')) {
             sessionStorage.removeItem('checkout_items')
             sessionStorage.removeItem('checkout_value')
-            sessionStorage.removeItem('purchased')
             sessionStorage.removeItem('began_checkout')
             sessionStorage.removeItem('cart_viewed')
         }
@@ -264,6 +263,7 @@ const domObserver = new MutationObserver(() => {
         })
     }
 
+
     // mycatalog product card
     if (productCard) {
         // add to cart my catalog page
@@ -295,7 +295,7 @@ const domObserver = new MutationObserver(() => {
                 let item = {
                     item_id: orderLine.item.itemNumber,
                     item_name: orderLine.item.name,
-                    price: orderLine.lineAmounts.net,
+                    price: orderLine.unitPrice.net,
                     quantity: orderLine.quantity
                 }
                 ecommItems.push(item)
@@ -321,20 +321,21 @@ const domObserver = new MutationObserver(() => {
 
     //purchase
     if (checkoutConfirmation && window.location.href.includes('checkoutpage/confirmation')) {
+        console.log('ON CONFIRMATION PAGE')
         let items = JSON.parse(sessionStorage.getItem('checkout_items'))
         let grandTotal = parseFloat($(".order-summary-component .total .amount").text().replace(/[^.0-9]/g, '')) || 0.00
         parseFloat(sessionStorage.getItem('checkout_value'))
+        console.log(items)
+        console.log(grandTotal)
 
-        if (!sessionStorage.getItem('purchased')) {
-            gtag("event", "purchase", {
-                // using date.now for transaction id since we dont have access to the order number after purchase in the ui
-                transaction_id: `T_${Date.now()}`,
-                value: grandTotal,
-                currency: "USD",
-                items: items
-            });
-            sessionStorage.setItem('purchased', true);
-        }
+        gtag("event", "purchase", {
+            // using date.now for transaction id since we dont have access to the order number after purchase in the ui
+            transaction_id: `T_${Date.now()}`,
+            value: grandTotal,
+            currency: "USD",
+            items: items
+        });
+
     }
 
 
