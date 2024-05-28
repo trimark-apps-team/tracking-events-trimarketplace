@@ -127,11 +127,12 @@ window.addEventListener("load", (event) => {
                         item_id: $(productDetail).find('.item-number-top span').text() || '',
                         item_name: $(productDetail).find(".product-description").text() || '',
                         price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
-                        quantity: Number($(productDetail).find($(".add-to-cart-quantity").val()))
+                        quantity: 1
                     },
                 ]
             });
 
+            // select item on pdp page
             gtag('event', 'select_item', {
                 currency: "USD",
                 value: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
@@ -140,7 +141,7 @@ window.addEventListener("load", (event) => {
                         item_id: $(productDetail).find('.item-number-top span').text() || '',
                         item_name: $(productDetail).find(".product-description").text() || '',
                         price: parseFloat($(productDetail).find(".product-pricing .display-price .price").text().replace(/[^.0-9]/g, '')) || 0.00,
-                        quantity: Number($(productDetail).find($(".add-to-cart-quantity").val()))
+                        quantity: 1
                     },
                 ]
             });
