@@ -113,8 +113,7 @@ window.addEventListener("load", (event) => {
 
         // sucessful login
         if (window.location.href.includes('my-account')) {
-            var loggedIn = sessionStorage.getItem('logged_in')
-            if (!loggedIn) {
+            if (!sessionStorage.getItem('logged_in')) {
                 gtag('event', 'login', {
                     'event_category': 'form submission',
                     'event_label': 'login form submit'
