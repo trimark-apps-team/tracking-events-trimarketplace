@@ -111,17 +111,20 @@ window.addEventListener("load", (event) => {
             localStorage.setItem("site_visitor", true);
         }
 
-        // successful login check for .user-info-logged-in class on the my account page and set cookie to only fire once per session
-        var loggedInClass = $('.user-info-logged-in')
-        var loggedIn = getCookie("logged_in");
-        if (loggedInClass && !loggedIn) {
-            gtag('event', 'login', {
-                'event_category': 'form submission',
-                'event_label': 'login form submit'
-            });
-            setCookie('logged_in')
+        // sucessful login
+        if (window.location.href.includes('myacount')) {
+            var loggedIn = sessionStorage.getItem('logged_in')
+            if (!loggedIn) {
+                gtag('event', 'login', {
+                    'event_category': 'form submission',
+                    'event_label': 'login form submit'
+                });
+                sessionStorage.setItem('logged_in')
 
+            }
         }
+
+
 
         // view item on pdp page
         if (productDetail && window.location.href.indexOf("product-details") > -1) {
