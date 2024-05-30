@@ -118,7 +118,7 @@ window.addEventListener("load", (event) => {
                     'event_category': 'form submission',
                     'event_label': 'login form submit'
                 });
-                sessionStorage.setItem('logged_in')
+                sessionStorage.setItem('logged_in', true)
 
             }
         }
