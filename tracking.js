@@ -112,7 +112,7 @@ window.addEventListener("load", (event) => {
         }
 
         // sucessful login
-        if (window.location.href.includes('myacount')) {
+        if (window.location.href.includes('my-account')) {
             var loggedIn = sessionStorage.getItem('logged_in')
             if (!loggedIn) {
                 gtag('event', 'login', {
