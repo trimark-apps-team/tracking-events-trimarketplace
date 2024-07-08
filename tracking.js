@@ -311,7 +311,8 @@ const domObserver = new MutationObserver(() => {
                     item_id: orderLine.item.itemNumber,
                     item_name: orderLine.item.name,
                     price: orderLine.unitPrice.net,
-                    quantity: orderLine.quantity
+                    quantity: orderLine.quantity,
+                    item_image: orderLine.item.images[0].thumbImage
                 }
                 ecommItems.push(item)
                 if (orderLines.length - 1 === index) {
