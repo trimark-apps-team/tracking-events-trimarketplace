@@ -307,14 +307,19 @@ const domObserver = new MutationObserver(() => {
             let totalCartPrice = data.totalPrice
             let ecommItems = []
             orderLines.forEach((orderLine, index) => {
+                console.log(orderLine)
+                let hasImage;
+                if(orderLine.item.images[0] !== undefined) {hasImage = true}
+                console.log(hasImage)
                 let item = {
                     item_id: orderLine.item.itemNumber,
                     item_name: orderLine.item.name,
                     price: orderLine.unitPrice.net,
                     quantity: orderLine.quantity,
-                    item_image: orderLine.item.images[0].thumbImage
+                    item_image: hasImage ? orderLine.item.images[0].thumbImage : ""
                 }
-                ecommItems.push(item)
+                    ecommItems.push(item)
+                
                 if (orderLines.length - 1 === index) {
                     if (!sessionStorage.getItem('began_checkout')) {
                         gtag('event', 'begin_checkout', {
