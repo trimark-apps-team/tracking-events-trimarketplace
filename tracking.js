@@ -20,6 +20,7 @@ window.addEventListener("load", (event) => {
     setTimeout(() => {
         if (!window.location.href.includes('checkout')) {
             sessionStorage.removeItem('checkout_items')
+            sessionStorage.removeItem('checkout_items_json')
             sessionStorage.removeItem('checkout_value')
             sessionStorage.removeItem('purchased')
             sessionStorage.removeItem('began_checkout')
@@ -328,6 +329,7 @@ const domObserver = new MutationObserver(() => {
                             items: ecommItems
                         });
 
+                        sessionStorage.setItem('checkout_items_json', ecommItems)
                         sessionStorage.setItem('checkout_items', JSON.stringify(ecommItems))
                         sessionStorage.setItem('checkout_value', totalCartPrice)
                         sessionStorage.setItem('began_checkout', true)
