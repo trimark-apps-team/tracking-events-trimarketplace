@@ -336,14 +336,14 @@ const domObserver = new MutationObserver(() => {
                         // we are creating a separate session storage for hubspot ecomm items
                         let hubspotItems = []
                         ecommItems.forEach((item, index) => {
-                            let item = {
+                            let hsitem = {
                                 item_id: item.item_id,
                                 item_name: item.item_name,
                                 price: item.price.toFixed(2),
                                 quantity: item.quantity,
                                 item_image: item.item_image
                             }
-                            hubspotItems.push(item)
+                            hubspotItems.push(hsitem)
                             if(ecommItems.length - 1 === index) {
                                 sessionStorage.setItem('checkout_items_hubspot', JSON.stringify(hubspotItems))
                             }
