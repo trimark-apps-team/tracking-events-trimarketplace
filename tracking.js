@@ -25,6 +25,7 @@ window.addEventListener("load", (event) => {
             sessionStorage.removeItem('purchased')
             sessionStorage.removeItem('began_checkout')
             sessionStorage.removeItem('cart_viewed')
+            sessionStorage.removeItem('checkout_items_hubspot')
         }
         const productDetail = $(".product-detail")
 
@@ -326,10 +327,29 @@ const domObserver = new MutationObserver(() => {
                             items: ecommItems
                         });
 
-                        sessionStorage.setItem('checkout_items_json', ecommItems)
+                        
                         sessionStorage.setItem('checkout_items', JSON.stringify(ecommItems))
                         sessionStorage.setItem('checkout_value', totalCartPrice)
                         sessionStorage.setItem('began_checkout', true)
+
+                        //items sent to hubspot need to have their price properties set toFixed for proper formatting in emails. GA4 events need to be a number, so 
+                        // we are creating a separate session storage for hubspot ecomm items
+                        let hubspotItems = []
+                        ecommItems.forEach((item, index) => {
+                            let item = {
+                                item_id: item.item_id,
+                                item_name: item.item_name,
+                                price: item.price.toFixed(2),
+                                quantity: item.quantity,
+                                item_image: item.item_image
+                            }
+                            hubspotItems.push(item)
+                            if(ecommItems.length - 1 === index) {
+                                sessionStorage.setItem('checkout_items_hubspot', JSON.stringify(hubspotItems))
+                            }
+
+                        })
+                        
                     }
                 }
 
