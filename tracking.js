@@ -303,7 +303,7 @@ const domObserver = new MutationObserver(() => {
     }
 
     // begin checkout event
-    if (shippingStep && window.location.href.includes('checkoutpage/deliverymethod')) {
+    if (shippingStep && window.location.href.includes('deliverymethod')) {
         $.getJSON('/delegate/ecom-api/orders/current', (data) => {
             let orderLines = data.orderLines
             let totalCartPrice = data.totalPrice
@@ -360,7 +360,7 @@ const domObserver = new MutationObserver(() => {
 
 
     //purchase
-    if (checkoutConfirmation && window.location.href.includes('checkoutpage/confirmation')) {
+    if (checkoutConfirmation && window.location.href.includes('confirmation')) {
         let items = JSON.parse(sessionStorage.getItem('checkout_items'))
         let grandTotal = parseFloat($(".order-summary-component .total .amount").text().replace(/[^.0-9]/g, '')) || 0.00
         if (!sessionStorage.getItem('purchased')) {
